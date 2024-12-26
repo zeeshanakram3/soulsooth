@@ -86,7 +86,7 @@ The app will allow users to input their current emotional state. It will then us
 -   The frontend displays an audio player that can play the generated meditation ✅
 -   Users can listen to the personalized meditation ✅
 
-### Phase 3: User Authentication and History
+### Phase 3: User Authentication and History ✅
 
 **Objective:** Allow users to view their past meditations.
 
@@ -97,22 +97,68 @@ The app will allow users to input their current emotional state. It will then us
     - Login/signup pages already available at /login and /signup ✅
     - Protected routes and API endpoints already secured with auth middleware ✅
 
-2. **Frontend - User Dashboard:**
-    - Create a new route `app/dashboard` for the user dashboard
-    - Design a simple dashboard page that shows past meditations
-    - Display meditation history with:
-        - Date created
-        - User input
-        - Meditation script
-        - Audio playback
+2. **Frontend - User Dashboard:** ✅
+    - Create a new route `app/dashboard` for the user dashboard ✅
+    - Design a simple dashboard page that shows past meditations ✅
+    - Display meditation history with: ✅
+        - Date created ✅
+        - User input ✅
+        - Meditation script ✅
+        - Audio playback ✅
 
-3. **Server Actions:**
-    - Add `getMeditationsByUserId` action to fetch user's meditation history
-    - Add pagination support for large histories
+3. **Server Actions:** ✅
+    - Add `getMeditationsByUserId` action to fetch user's meditation history ✅
+    - Add pagination support for large histories ✅
+
+**Verification:** ✅
+
+- Users can access their dashboard when logged in ✅
+- Past meditations are displayed in chronological order ✅
+- Users can replay their past meditations ✅
+- History is paginated for better performance ✅
+
+### Phase 4: Landing Page and Navigation
+
+**Objective:** Create a focused landing page that highlights the meditation features and provides clear navigation to key functionality.
+
+**Tasks:**
+
+1. **Landing Page Redesign:**
+    - Remove existing marketing/template content
+    - Create a new landing page that:
+        - Explains the meditation app's purpose
+        - Shows how to get started
+        - Highlights key features (personalized meditations, audio generation)
+    - Add clear call-to-action buttons for:
+        - "Start Meditating" (for logged-in users)
+        - "Sign Up" (for new users)
+        - "View History" (for logged-in users)
+
+2. **Navigation Updates:**
+    - Update the main navigation to include:
+        - Home (landing page)
+        - Meditate
+        - Dashboard (meditation history)
+        - Login/Signup (for logged-out users)
+        - User menu (for logged-in users)
+    - Ensure responsive design for mobile devices
+    - Add proper active states for current route
+
+3. **Route Protection:**
+    - Redirect logged-out users to login when accessing protected routes
+    - Redirect logged-in users to dashboard from login/signup pages
+    - Add loading states during auth checks
+
+4. **Cleanup:**
+    - Remove unused marketing routes and components
+    - Clean up unused assets and dependencies
+    - Update metadata and SEO information
 
 **Verification:**
 
-- Users can access their dashboard when logged in
-- Past meditations are displayed in chronological order
-- Users can replay their past meditations
-- History is paginated for better performance
+- Landing page clearly communicates the app's purpose
+- Users can easily navigate to meditation and history features
+- Navigation updates based on auth state
+- All routes are properly protected
+- No unused code or assets remain
+- App maintains consistent styling and branding
