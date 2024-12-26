@@ -1,6 +1,11 @@
 import { createMeditationAction } from "@/actions/db/meditations-actions"
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
+import OpenAI from "openai"
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+})
 
 export async function POST(req: Request) {
   try {
@@ -26,8 +31,32 @@ export async function POST(req: Request) {
       )
     }
 
-    // TODO: Replace with actual GPT-4o-mini call
-    const meditationScript = `Here is a meditation for you based on your input: "${userInput}"\n\nTake a deep breath...`
+    // Generate meditation script using GPT-4o-mini
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a meditation guide. Generate a calming and personalized meditation script based on the user's current emotional state or needs. The script should be about 30 seconds long when read aloud. So just 3 lines should be enough. Focus on breathing, mindfulness, and addressing their specific situation."
+        },
+        {
+          role: "user",
+          content: userInput
+        }
+      ]
+    })
+
+    const meditationScript = completion.choices[0]?.message?.content
+
+    if (!meditationScript) {
+      return NextResponse.json(
+        { error: "Failed to generate meditation script" },
+        {
+          status: 500
+        }
+      )
+    }
 
     const result = await createMeditationAction({
       userId,
