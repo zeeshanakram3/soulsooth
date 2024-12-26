@@ -3,7 +3,7 @@
 import { db } from "@/db/db"
 import { InsertMeditation, SelectMeditation, meditationsTable } from "@/db/schema"
 import { ActionState } from "@/types/server-action-types"
-import { eq } from "drizzle-orm"
+import { desc, eq, sql } from "drizzle-orm"
 
 export async function createMeditationAction(
   meditation: InsertMeditation
@@ -48,5 +48,39 @@ export async function getMeditationAction(
   } catch (error) {
     console.error("Error getting meditation:", error)
     return { isSuccess: false, message: "Failed to get meditation" }
+  }
+}
+
+export async function getMeditationsByUserIdAction(
+  userId: string,
+  page: number = 1,
+  limit: number = 10
+): Promise<ActionState<{ meditations: SelectMeditation[]; total: number }>> {
+  try {
+    const offset = (page - 1) * limit
+
+    const meditations = await db.query.meditations.findMany({
+      where: eq(meditationsTable.userId, userId),
+      orderBy: [desc(meditationsTable.createdAt)],
+      limit,
+      offset
+    })
+
+    const [{ count }] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(meditationsTable)
+      .where(eq(meditationsTable.userId, userId))
+
+    return {
+      isSuccess: true,
+      message: "Meditations retrieved successfully",
+      data: {
+        meditations,
+        total: Number(count)
+      }
+    }
+  } catch (error) {
+    console.error("Error getting meditations:", error)
+    return { isSuccess: false, message: "Failed to get meditations" }
   }
 } 

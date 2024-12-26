@@ -88,64 +88,31 @@ The app will allow users to input their current emotional state. It will then us
 
 ### Phase 3: User Authentication and History
 
-**Objective:** Implement user authentication and allow users to view their past meditations.
+**Objective:** Allow users to view their past meditations.
 
 **Tasks:**
 
-1. **User Authentication:**
-    -   Integrate Supabase Authentication into the app.
-    -   Create login/signup pages using pre-built Supabase UI components or custom forms.
-    -   Protect relevant routes and API endpoints to ensure only authenticated users can access them.
-2. **User Profiles:**
-    -   Create a `profiles` table to store user-specific information (if needed).
-    -   Link the `meditations` table to the `profiles` table via the `userId` foreign key.
-3. **Frontend - User Dashboard:**
-    -   Create a new route `app/dashboard` for the user dashboard.
-    -   Design a dashboard layout (`layout.tsx`) and page (`page.tsx`).
-    -   Create a server component `meditation-history.tsx` in `app/dashboard/_components`.
-    -   Fetch the user's past meditations from the database using a server action.
-    -   Display the list of past meditations, including user input, generated script, and audio playback.
-4. **Server Actions:**
-    -   Create a new server action `getMeditationsByUserAction` in `actions/db/meditations-actions.ts` to retrieve all meditations for a given user ID.
+1. **User Authentication:** ✅
+    - Already implemented with Clerk ✅
+    - Login/signup pages already available at /login and /signup ✅
+    - Protected routes and API endpoints already secured with auth middleware ✅
+
+2. **Frontend - User Dashboard:**
+    - Create a new route `app/dashboard` for the user dashboard
+    - Design a simple dashboard page that shows past meditations
+    - Display meditation history with:
+        - Date created
+        - User input
+        - Meditation script
+        - Audio playback
+
+3. **Server Actions:**
+    - Add `getMeditationsByUserId` action to fetch user's meditation history
+    - Add pagination support for large histories
 
 **Verification:**
 
--   Users can sign up and log in to the app.
--   Authenticated users can access the dashboard.
--   The dashboard displays a list of the user's past meditations.
--   Users can view the details and play the audio of their past meditations.
-
-**Note:** Don't be lazy and write code to complete each task.
-
-### Phase 4: Enhanced UI/UX and Additional Features
-
-**Objective:** Improve the user interface and user experience, and add optional features based on user feedback and feasibility.
-
-**Tasks:**
-
-1. **UI/UX Improvements:**
-    -   Refine the overall design and layout of the app using Tailwind CSS and Shadcn components.
-    -   Implement smooth transitions and animations using Framer Motion.
-    -   Improve the responsiveness of the app for different screen sizes.
-2. **Advanced Meditation Options:**
-    -   Allow users to select a meditation style or theme (e.g., mindfulness, relaxation, focus).
-    -   Incorporate background music or ambient sounds into the generated meditations.
-    -   Provide options to adjust the voice, speed, and other parameters of the TTS output.
-3. **Progress Tracking:**
-    -   Implement a system to track the user's meditation progress (e.g., number of sessions, total time spent meditating).
-    -   Display progress statistics on the user dashboard.
-4. **Community Features (Optional):**
-    -   Allow users to share their favorite meditations with others.
-    -   Create a forum or discussion board for users to connect and share their experiences.
-5. **Feedback and Iteration:**
-    -   Collect user feedback through surveys or feedback forms.
-    -   Iterate on the app's design and functionality based on user feedback.
-
-**Verification:**
-
--   The app has a polished and intuitive user interface.
--   Users can customize their meditation experience.
--   Progress tracking is accurate and informative.
--   Optional features (if implemented) are functional and enhance the user experience.
-
-**Note:** Don't be lazy and write code to complete each task. 
+- Users can access their dashboard when logged in
+- Past meditations are displayed in chronological order
+- Users can replay their past meditations
+- History is paginated for better performance

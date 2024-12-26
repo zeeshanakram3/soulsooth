@@ -92,36 +92,72 @@ NEXT_PUBLIC_POSTHOG_HOST=
 
 Key learnings from implementing the meditation app:
 
+### 1. Next.js App Router & Server Components
 
-1. **Next.js API Routes with Dynamic Parameters**
-   - Dynamic route parameters in API routes must be properly awaited
-   - Use the pattern: `const { paramName } = await params` instead of directly accessing `params.paramName`
-   - Type dynamic params as: `params: Promise<{ paramName: string }> | { paramName: string }`
+- Keep data fetching in server components for better performance
+- Use client components only when needed (state, interactivity)
+- Properly handle loading states with Suspense boundaries
+- Structure routes with _components folder for route-specific components
 
-2. **Client vs Server Components**
-   - Server components should be used for data fetching and initial state
-   - Convert to client components when using hooks (useState, useEffect)
-   - Use loading states and error handling in client components
-   - Keep state management close to where it's needed
+### 2. OpenAI Integration
 
-3. **Database Schema Best Practices**
-   - Always include `createdAt` and `updatedAt` timestamps
-   - Use snake_case for column names in PostgreSQL
-   - Properly type database operations with Drizzle's `$inferInsert` and `$inferSelect`
+- GPT-4o-mini works well for short, focused content generation
+- OpenAI's TTS service (tts-1) provides high-quality audio output
+- Store API responses properly with error handling
+- Use appropriate system prompts for consistent output
+- Keep prompts focused and specific for better results
 
-4. **Error Handling**
-   - Implement consistent error handling patterns across API routes
-   - Return appropriate HTTP status codes
-   - Provide meaningful error messages
-   - Handle both client and server-side errors gracefully
+### 3. Database & File Management
 
-5. **API Response Structure**
-   - Use consistent response format: `{ isSuccess, message, data }`
-   - Include proper typing for all API responses
-   - Handle null/undefined cases explicitly
-   - For generation, the model is gpt-4o-mini
+- Always include timestamps (createdAt, updatedAt) in tables
+- Use snake_case for PostgreSQL column names
+- Handle file storage with proper directory checks
+- Generate unique filenames with timestamps
+- Store relative paths in database for easier deployment
 
-6. **Environment Setup** ( this step is already done but if the errors are not going away, check this )
-   - Always push database schema changes with `npx drizzle-kit push`
-   - Keep environment variables in `.env.local`
-   - Document required environment variables in `.env.example`
+### 4. Error Handling & Type Safety
+
+- Use ActionState type for consistent API responses
+- Implement proper error boundaries in components
+- Handle both client and server-side errors gracefully
+- Type database operations with Drizzle's $inferInsert and $inferSelect
+
+### 5. Authentication & Security
+
+- Properly await auth() calls in API routes
+- Check userId before any protected operations
+- Keep environment variables secure
+- Never expose API keys to the client
+
+### Important Notes
+
+1. **Environment Setup**
+   - Required Node.js version: `^18.18.0 || ^19.8.0 || >= 20.0.0`
+   - Required environment variables:
+     ```
+     DATABASE_URL=
+     OPENAI_API_KEY=
+     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+     CLERK_SECRET_KEY=
+     ```
+
+2. **Database Management**
+   - Run `npx drizzle-kit push` after schema changes
+   - Check database connection string format
+   - URL encode special characters in DB password
+
+3. **File Storage**
+   - Audio files are stored in `public/audio`
+   - Clean up unused audio files periodically
+   - Consider cloud storage for production
+
+4. **Performance**
+   - Audio generation can take a few seconds
+   - Implement proper loading states
+   - Consider caching for frequently accessed data
+
+5. **Security**
+   - Validate user input
+   - Limit file sizes and types
+   - Implement rate limiting for API routes
+   - Regular security audits
