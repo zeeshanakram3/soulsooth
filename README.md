@@ -64,3 +64,64 @@ NEXT_PUBLIC_POSTHOG_HOST=
 2. Copy `.env.example` to `.env.local` and fill in the environment variables from above
 3. Run `npm install` to install dependencies
 4. Run `npm run dev` to run the app locally
+
+
+## Setup
+
+1. Clone the repository
+2. Copy `.env.example` to `.env.local` and fill in the environment variables from above
+3. Run `npm install` to install dependencies
+4. Run `npm run dev` to run the app locally
+
+## Fixes
+
+### Database Connection
+- If getting `getaddrinfo ENOTFOUND` error:
+  - URL encode special characters in DB password (e.g., `#` becomes `%23`)
+  - Remove any `http://` or `https://` from the database URL
+
+### Database Schema
+- If `relation does not exist` error:
+  - Run `npx drizzle-kit push` to push schema to database
+
+### Node Version
+- Required: `^18.18.0 || ^19.8.0 || >= 20.0.0`
+- Update Node using nvm: `nvm install 20` and `nvm use 20`
+
+## Development Notes
+
+Key learnings from implementing the meditation app:
+
+
+1. **Next.js API Routes with Dynamic Parameters**
+   - Dynamic route parameters in API routes must be properly awaited
+   - Use the pattern: `const { paramName } = await params` instead of directly accessing `params.paramName`
+   - Type dynamic params as: `params: Promise<{ paramName: string }> | { paramName: string }`
+
+2. **Client vs Server Components**
+   - Server components should be used for data fetching and initial state
+   - Convert to client components when using hooks (useState, useEffect)
+   - Use loading states and error handling in client components
+   - Keep state management close to where it's needed
+
+3. **Database Schema Best Practices**
+   - Always include `createdAt` and `updatedAt` timestamps
+   - Use snake_case for column names in PostgreSQL
+   - Properly type database operations with Drizzle's `$inferInsert` and `$inferSelect`
+
+4. **Error Handling**
+   - Implement consistent error handling patterns across API routes
+   - Return appropriate HTTP status codes
+   - Provide meaningful error messages
+   - Handle both client and server-side errors gracefully
+
+5. **API Response Structure**
+   - Use consistent response format: `{ isSuccess, message, data }`
+   - Include proper typing for all API responses
+   - Handle null/undefined cases explicitly
+   - For generation, the model is gpt-4o-mini
+
+6. **Environment Setup** ( this step is already done but if the errors are not going away, check this )
+   - Always push database schema changes with `npx drizzle-kit push`
+   - Keep environment variables in `.env.local`
+   - Document required environment variables in `.env.example`
