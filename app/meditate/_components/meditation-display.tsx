@@ -14,117 +14,64 @@ interface MeditationDisplayProps {
 export default function MeditationDisplay({
   meditation
 }: MeditationDisplayProps) {
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const sourceNodeRef = useRef<AudioBufferSourceNode | null>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
-  const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null)
-  const [isLoading, setIsLoading] = useState(true)
 
-  // Load and decode audio file
-  useEffect(() => {
-    if (!meditation.audioFilePath) {
-      setIsLoading(false)
-      return
+  // Calculate segment durations and start times
+  const segmentTimes = meditation.meditationScript.segments.reduce<
+    Array<{ start: number; duration: number }>
+  >((acc, segment, index) => {
+    const prevEnd =
+      index > 0 ? acc[index - 1].start + acc[index - 1].duration : 0
+    if (segment.type === "speech") {
+      // Estimate speech duration (roughly 5 words per second)
+      const wordCount = segment.content.split(/\s+/).length
+      const duration = Math.ceil(wordCount / 5)
+      acc.push({ start: prevEnd, duration })
+    } else {
+      acc.push({ start: prevEnd, duration: segment.duration })
     }
+    return acc
+  }, [])
 
-    const loadAudio = async () => {
-      try {
-        const response = await fetch(meditation.audioFilePath as string)
-        const arrayBuffer = await response.arrayBuffer()
-        const context = new AudioContext()
-        const buffer = await context.decodeAudioData(arrayBuffer)
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
 
-        audioContextRef.current = context
-        setAudioBuffer(buffer)
-        setIsLoading(false)
-      } catch (error) {
-        console.error("Error loading audio:", error)
-        setIsLoading(false)
+    const updateSegment = () => {
+      const currentTime = audio.currentTime
+      const newIndex = segmentTimes.findIndex(
+        (timing, index) =>
+          currentTime >= timing.start &&
+          currentTime <
+            timing.start +
+              timing.duration +
+              (index < segmentTimes.length - 1 ? 0 : 1)
+      )
+      if (newIndex !== -1) {
+        setCurrentSegmentIndex(newIndex)
       }
     }
 
-    loadAudio()
+    audio.addEventListener("timeupdate", updateSegment)
+    audio.addEventListener("play", () => setIsPlaying(true))
+    audio.addEventListener("pause", () => setIsPlaying(false))
+    audio.addEventListener("ended", () => {
+      setIsPlaying(false)
+      setCurrentSegmentIndex(0)
+    })
 
     return () => {
-      if (audioContextRef.current) {
-        audioContextRef.current.close()
-      }
-    }
-  }, [meditation.audioFilePath])
-
-  // Play audio with pauses
-  const playAudioWithPauses = async () => {
-    if (!audioContextRef.current || !audioBuffer) return
-
-    setIsPlaying(true)
-    setCurrentSegmentIndex(0)
-
-    const context = audioContextRef.current
-    let currentTime = context.currentTime
-    let segmentStartTime = currentTime
-
-    // Create gain node for smooth transitions
-    const gainNode = context.createGain()
-    gainNode.connect(context.destination)
-
-    // Process each segment
-    for (let i = 0; i < meditation.meditationScript.segments.length; i++) {
-      const segment = meditation.meditationScript.segments[i]
-
-      if (segment.type === "speech") {
-        // Play speech segment
-        const source = context.createBufferSource()
-        source.buffer = audioBuffer
-        source.connect(gainNode)
-
-        // Fade in
-        gainNode.gain.setValueAtTime(0, segmentStartTime)
-        gainNode.gain.linearRampToValueAtTime(1, segmentStartTime + 0.1)
-
-        source.start(segmentStartTime)
-
-        // Calculate duration based on word count
-        const wordCount = segment.content.split(/\s+/).length
-        const duration = Math.ceil(wordCount / 2) // Adjust timing as needed
-
-        // Fade out
-        gainNode.gain.setValueAtTime(1, segmentStartTime + duration - 0.1)
-        gainNode.gain.linearRampToValueAtTime(0, segmentStartTime + duration)
-
-        segmentStartTime += duration
-      } else if (segment.type === "pause") {
-        // Add pause duration
-        segmentStartTime += segment.duration
-      }
-
-      // Schedule segment index update
-      setTimeout(
-        () => {
-          setCurrentSegmentIndex(i)
-        },
-        (segmentStartTime - currentTime) * 1000
-      )
-    }
-
-    // Reset at the end
-    setTimeout(
-      () => {
+      audio.removeEventListener("timeupdate", updateSegment)
+      audio.removeEventListener("play", () => setIsPlaying(true))
+      audio.removeEventListener("pause", () => setIsPlaying(false))
+      audio.removeEventListener("ended", () => {
         setIsPlaying(false)
         setCurrentSegmentIndex(0)
-      },
-      (segmentStartTime - currentTime) * 1000
-    )
-  }
-
-  const stopAudio = () => {
-    if (audioContextRef.current) {
-      audioContextRef.current.close()
-      audioContextRef.current = new AudioContext()
+      })
     }
-    setIsPlaying(false)
-    setCurrentSegmentIndex(0)
-  }
+  }, [segmentTimes])
 
   return (
     <Card className="space-y-6 p-6">
@@ -161,20 +108,16 @@ export default function MeditationDisplay({
       </div>
 
       {meditation.audioFilePath && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Listen</h3>
-          {isLoading ? (
-            <div className="text-muted-foreground">Loading audio...</div>
-          ) : (
-            <div className="flex gap-4">
-              <button
-                onClick={isPlaying ? stopAudio : playAudioWithPauses}
-                className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-              >
-                {isPlaying ? "Stop" : "Play"}
-              </button>
-            </div>
-          )}
+        <div>
+          <h3 className="mb-2 text-lg font-semibold">Listen</h3>
+          <audio
+            ref={audioRef}
+            controls
+            className="w-full"
+            src={meditation.audioFilePath}
+          >
+            Your browser does not support the audio element.
+          </audio>
         </div>
       )}
     </Card>

@@ -2,6 +2,8 @@
 
 import { MeditationScript, SelectMeditation } from "@/db/schema"
 import { formatDate } from "@/lib/utils"
+import VolumeSlider from "@/app/meditate/_components/volume-slider"
+import { useState, useRef, useEffect } from "react"
 
 interface MeditationCardProps {
   meditation: SelectMeditation
@@ -9,6 +11,28 @@ interface MeditationCardProps {
 
 export default function MeditationCard({ meditation }: MeditationCardProps) {
   const meditationScript = meditation.meditationScript as MeditationScript
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const [volume, setVolume] = useState(0.15)
+
+  // Load saved volume from localStorage on mount
+  useEffect(() => {
+    const savedVolume = localStorage.getItem("meditation-music-volume")
+    if (savedVolume && audioRef.current) {
+      const parsedVolume = parseFloat(savedVolume)
+      setVolume(parsedVolume)
+      handleVolumeChange(parsedVolume)
+    }
+  }, [])
+
+  const handleVolumeChange = (newVolume: number) => {
+    setVolume(newVolume)
+    if (audioRef.current) {
+      // Adjust background music volume in real-time
+      const backgroundVolume = newVolume
+      const voiceVolume = 1 // Keep voice volume constant
+      audioRef.current.volume = Math.min(1, voiceVolume + backgroundVolume)
+    }
+  }
 
   return (
     <div className="space-y-4 rounded-lg border p-4">
@@ -50,8 +74,15 @@ export default function MeditationCard({ meditation }: MeditationCardProps) {
       </div>
 
       {meditation.audioFilePath && (
-        <div>
-          <audio controls src={meditation.audioFilePath} className="w-full" />
+        <div className="space-y-4">
+          <VolumeSlider defaultVolume={volume} onChange={handleVolumeChange} />
+          <audio
+            ref={audioRef}
+            controls
+            src={meditation.audioFilePath}
+            className="w-full"
+            onPlay={() => handleVolumeChange(volume)} // Apply volume when playback starts
+          />
         </div>
       )}
     </div>

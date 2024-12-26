@@ -150,13 +150,13 @@ The app will allow users to input their current emotional state. It will then us
 - Navigation updates based on auth state ✅
 - All routes are properly protected ✅
 
-### Phase 5: Structured Meditation with Pauses
+### Phase 5: Structured Meditation with Pauses ✅
 
 **Objective:** Create structured meditation scripts with timed pauses using JSON output format.
 
 **Tasks:**
 
-1. **Structured Script Generation:**
+1. **Structured Script Generation:** ✅
     - Update the prompt to generate JSON-formatted meditation scripts with:
         ```json
         {
@@ -173,73 +173,60 @@ The app will allow users to input their current emotional state. It will then us
           ]
         }
         ```
-    - Configure OpenAI API to enforce JSON schema
-    - Target 30-second total meditation length
-    - Each pause segment will be 10 seconds
+    - Configure OpenAI API to enforce JSON schema ✅
+    - Target 30-second total meditation length ✅
+    - Each pause segment will be 10 seconds ✅
 
-2. **Audio Processing:**
-    - Parse JSON response to extract segments
-    - Generate audio files for speech segments using OpenAI TTS
-    - Create 10-second silent audio files for pause segments
-    - Combine segments in sequence
-    - Export as single meditation audio file
+2. **Audio Processing:** ✅
+    - Parse JSON response to extract segments ✅
+    - Generate audio files for speech segments using OpenAI TTS ✅
+    - Create 10-second silent audio files for pause segments ✅
+    - Combine segments in sequence ✅
+    - Export as single meditation audio file ✅
 
-3. **Backend Updates:**
+3. **Backend Updates:** ✅
     - Modify `app/api/generate-meditation/route.ts` to:
-        - Request and validate JSON responses
-        - Process structured segments
-        - Handle audio generation per segment
-        - Manage file combining
-    - Update database schema to store structured script JSON
+        - Request and validate JSON responses ✅
+        - Process structured segments ✅
+        - Handle audio generation per segment ✅
+        - Manage file combining ✅
+    - Update database schema to store structured script JSON ✅
 
-4. **Frontend Updates:**
-    - Display speech and pause segments
+4. **Frontend Updates:** ✅
+    - Display speech and pause segments ✅
     - Update audio player UI to show:
-        - Current segment type (speech/pause)
-        - Progress through meditation
+        - Current segment type (speech/pause) ✅
+        - Progress through meditation ✅
 
-**Verification:**
+**Verification:** ✅
 
-- Generated scripts follow JSON schema
-- Audio files include proper speech and silence segments
-- Total meditation length is approximately 30 seconds
-- Audio player reflects current segment
-- Database correctly stores structured format
+- Generated scripts follow JSON schema ✅
+- Audio files include proper speech and silence segments ✅
+- Total meditation length is approximately 30 seconds ✅
+- Audio player reflects current segment ✅
+- Database correctly stores structured format ✅
 
 ### Phase 6: Background Music Integration
 
-**Objective:** Add background music support to enhance meditation experience.
+**Objective:** Add background music support with volume control to enhance meditation experience.
 
 **Tasks:**
 
-1. **Music Features:**
-    - Create a collection of meditation background tracks
+1. **Audio Processing:**
+    - Mix background music with meditation audio using ffmpeg
     - Implement volume control for background music
-    - Add music selection interface
-    - Store user music preferences
-
-2. **Audio Processing:**
-    - Add background music layer to meditation audio
-    - Balance voice and music volumes
     - Ensure smooth transitions between segments
-    - Fade music in/out at start/end
+    - Maintain high audio quality
 
-3. **Backend Updates:**
-    - Add music file management
-    - Update audio processing to mix music
-    - Store music selection in database
-    - Handle music file cleanup
-
-4. **Frontend Updates:**
-    - Add music selection UI
-    - Display current music track
-    - Add volume controls
-    - Show music progress
+2. **Frontend Updates:**
+    - Add volume slider component for background music
+    - Display current volume level
+    - Implement real-time volume adjustment
+    - Save user's volume preference
 
 **Verification:**
 
-- Users can select background music
-- Music volume is balanced with voice
-- Transitions are smooth
-- Music preferences are saved
-- Audio player shows music information
+- Background music plays smoothly with meditation
+- Volume slider adjusts music intensity in real-time
+- Audio quality remains high after mixing
+- User volume preferences persist between sessions

@@ -14,6 +14,9 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
 
+// Default background music volume (0-1)
+const DEFAULT_MUSIC_VOLUME = 0.3
+
 export async function POST(req: Request) {
   try {
     const session = await auth()
@@ -28,7 +31,7 @@ export async function POST(req: Request) {
       )
     }
 
-    const { userInput } = await req.json()
+    const { userInput, musicVolume = DEFAULT_MUSIC_VOLUME } = await req.json()
     if (!userInput) {
       return NextResponse.json(
         { error: "User input is required" },
@@ -37,6 +40,9 @@ export async function POST(req: Request) {
         }
       )
     }
+
+    // Validate music volume
+    const validatedVolume = Math.max(0, Math.min(1, Number(musicVolume)))
 
     // Generate structured meditation script using GPT-4o-mini
     const completion = await openai.chat.completions.create({
@@ -47,11 +53,11 @@ export async function POST(req: Request) {
           content: `You are a meditation guide. Generate a structured meditation script based on the user's current emotional state or needs.
           The script should be formatted as JSON with the following structure:
           {
-            "title": "A brief title for the meditation",
+            "title": "string",
             "segments": [
               {
                 "type": "speech",
-                "content": "The meditation narration"
+                "content": "string"
               },
               {
                 "type": "pause",
@@ -150,15 +156,43 @@ export async function POST(req: Request) {
     const concatList = segmentFiles.map(file => `file '${file}'`).join("\n")
     fs.writeFileSync(concatListPath, concatList)
 
-    // Combine all segments using ffmpeg with consistent encoding
-    const finalPath = path.join(audioDir, `${baseFilename}.mp3`)
+    // First combine all meditation segments
+    const meditationPath = path.join(audioDir, `${baseFilename}-meditation.mp3`)
     await execAsync(
-      `ffmpeg -f concat -safe 0 -i "${concatListPath}" -ar 44100 -ac 2 -b:a 192k "${finalPath}"`
+      `ffmpeg -f concat -safe 0 -i "${concatListPath}" -ar 44100 -ac 2 -b:a 192k "${meditationPath}"`
     )
 
-    // Clean up segment files and concat list
+    // Calculate total duration of meditation
+    const { stdout: durationStr } = await execAsync(
+      `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${meditationPath}"`
+    )
+    const duration = parseFloat(durationStr)
+
+    // Get background music path
+    const bgMusicPath = path.join(
+      process.cwd(),
+      "public",
+      "background",
+      "background-music.mp3"
+    )
+
+    // Create a trimmed version of the background music that matches meditation length
+    const trimmedMusicPath = path.join(audioDir, `${baseFilename}-music.mp3`)
+    await execAsync(
+      `ffmpeg -i "${bgMusicPath}" -t ${duration} -ar 44100 -ac 2 "${trimmedMusicPath}"`
+    )
+
+    // Mix meditation audio with background music
+    const finalPath = path.join(audioDir, `${baseFilename}.mp3`)
+    await execAsync(
+      `ffmpeg -i "${meditationPath}" -i "${trimmedMusicPath}" -filter_complex "[1:a]volume=${validatedVolume}[m];[0:a][m]amix=inputs=2:duration=longest" -ar 44100 -ac 2 "${finalPath}"`
+    )
+
+    // Clean up intermediate files
     segmentFiles.forEach(file => fs.unlinkSync(file))
     fs.unlinkSync(concatListPath)
+    fs.unlinkSync(meditationPath)
+    fs.unlinkSync(trimmedMusicPath)
 
     // Get the relative path to the final audio file
     const audioPath = `/audio/${baseFilename}.mp3`
