@@ -65,13 +65,34 @@ NEXT_PUBLIC_POSTHOG_HOST=
 3. Run `npm install` to install dependencies
 4. Run `npm run dev` to run the app locally
 
+## Installation Notes
 
-## Setup
+### Node.js Version
+- Required Node.js version: `^18.18.0 || ^19.8.0 || >= 20.0.0`
+- Check your Node.js version: `node -v`
+- Update Node.js if needed to meet the version requirements
 
-1. Clone the repository
-2. Copy `.env.example` to `.env.local` and fill in the environment variables from above
-3. Run `npm install` to install dependencies
-4. Run `npm run dev` to run the app locally
+### Installation Steps
+1. **Clean Install**
+   ```bash
+   # Remove existing dependencies
+   rm -rf node_modules package-lock.json
+
+   # Install dependencies with legacy peer deps
+   npm install --legacy-peer-deps
+   ```
+
+2. **Common Installation Issues**
+   - If you encounter peer dependency conflicts, use `--legacy-peer-deps` flag
+   - You may see some deprecation warnings - these are from dependencies and won't affect functionality
+   - Make sure your Node.js version meets the requirements before running `npm run dev`
+
+3. **Verifying Installation**
+   ```bash
+   # Start the development server
+   npm run dev
+   ```
+   If you see a Node.js version error, update your Node.js version first.
 
 ## Fixes
 

@@ -51,7 +51,7 @@ export default async function RootLayout({
         </head>
         <body
           className={cn(
-            "min-h-screen bg-background font-sans antialiased",
+            "bg-background min-h-screen font-sans antialiased",
             inter.className
           )}
         >
@@ -66,9 +66,7 @@ export default async function RootLayout({
 
             <Nav />
 
-            <main className="flex min-h-screen flex-col">
-              {children}
-            </main>
+            <main className="flex min-h-screen flex-col">{children}</main>
 
             <TailwindIndicator />
 

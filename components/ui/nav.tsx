@@ -14,10 +14,7 @@ export function Nav() {
     <nav className="border-b">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-xl font-bold"
-          >
+          <Link href="/" className="text-xl font-bold">
             MindfulAI
           </Link>
 
@@ -28,7 +25,7 @@ export function Nav() {
               asChild
             >
               <Link href="/" className="gap-2">
-                <Home className="h-4 w-4" />
+                <Home className="size-4" />
                 Home
               </Link>
             </Button>
@@ -41,7 +38,7 @@ export function Nav() {
                   asChild
                 >
                   <Link href="/meditate" className="gap-2">
-                    <Brain className="h-4 w-4" />
+                    <Brain className="size-4" />
                     Meditate
                   </Link>
                 </Button>
@@ -52,7 +49,7 @@ export function Nav() {
                   asChild
                 >
                   <Link href="/dashboard" className="gap-2">
-                    <History className="h-4 w-4" />
+                    <History className="size-4" />
                     History
                   </Link>
                 </Button>
@@ -73,9 +70,7 @@ export function Nav() {
               </SignInButton>
 
               <SignUpButton mode="modal">
-                <Button size="sm">
-                  Get Started
-                </Button>
+                <Button size="sm">Get Started</Button>
               </SignUpButton>
             </>
           )}
@@ -83,4 +78,4 @@ export function Nav() {
       </div>
     </nav>
   )
-} 
+}
