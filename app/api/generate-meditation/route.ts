@@ -2,6 +2,8 @@ import { createMeditationAction } from "@/actions/db/meditations-actions"
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
+import fs from "fs"
+import path from "path"
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -58,10 +60,37 @@ export async function POST(req: Request) {
       )
     }
 
+    // Create public/audio directory if it doesn't exist
+    const audioDir = path.join(process.cwd(), "public", "audio")
+    if (!fs.existsSync(audioDir)) {
+      fs.mkdirSync(audioDir, { recursive: true })
+    }
+
+    // Generate speech using OpenAI TTS
+    const mp3 = await openai.audio.speech.create({
+      model: "tts-1",
+      voice: "alloy",
+      input: meditationScript
+    })
+
+    // Get the binary audio data
+    const buffer = Buffer.from(await mp3.arrayBuffer())
+
+    // Generate a unique filename
+    const filename = `meditation-${Date.now()}.mp3`
+    const filepath = path.join(audioDir, filename)
+
+    // Save the audio file
+    fs.writeFileSync(filepath, buffer)
+
+    // Get the relative path to the audio file
+    const audioPath = `/audio/${filename}`
+
     const result = await createMeditationAction({
       userId,
       userInput,
-      meditationScript
+      meditationScript,
+      audioFilePath: audioPath
     })
 
     if (!result.isSuccess) {
