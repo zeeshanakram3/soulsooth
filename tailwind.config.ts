@@ -14,6 +14,14 @@ const config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx,mdx}"
   ],
+  safelist: [
+    'light',
+    'dark',
+    'destructive',
+    'toaster',
+    'animate-caret-blink',
+    'origin-top-center'
+  ],
   prefix: "",
   theme: {
     container: {
