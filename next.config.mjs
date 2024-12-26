@@ -8,7 +8,15 @@ Configures Next.js for the app.
 const nextConfig = {
   images: {
     remotePatterns: [{ hostname: "localhost" }]
-  }
+  },
+  // Add experimental configuration
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '50mb'
+    }
+  },
+  // Add output configuration
+  output: 'standalone'
 }
 
 export default nextConfig
