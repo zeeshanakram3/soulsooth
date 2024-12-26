@@ -45,10 +45,13 @@ export default async function RootLayout({
 
   return (
     <ClerkProvider>
-      <html lang="en" suppressHydrationWarning>
+      <html lang="en" suppressHydrationWarning className="light">
+        <head>
+          <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+        </head>
         <body
           className={cn(
-            "bg-background mx-auto min-h-screen w-full scroll-smooth antialiased",
+            "min-h-screen bg-background font-sans antialiased",
             inter.className
           )}
         >
@@ -63,7 +66,7 @@ export default async function RootLayout({
 
             <Nav />
 
-            <main>
+            <main className="flex min-h-screen flex-col">
               {children}
             </main>
 
