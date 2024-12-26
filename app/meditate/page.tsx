@@ -8,6 +8,7 @@ import { MeditationScript } from "@/db/schema"
 import VolumeSlider from "./_components/volume-slider"
 import { Loader2, Music, Sparkles, Volume2 } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import MeditationPlayer from "./_components/meditation-player"
 
 type GenerationStep =
   | "idle"
@@ -196,54 +197,45 @@ export default function MeditatePage() {
 
         {meditation && (
           <Card className="overflow-hidden">
-            <div className="space-y-6 p-6">
-              <div
-                className={`space-y-4 transition-opacity duration-500 ${
-                  generationStep === "generating-script"
-                    ? "opacity-0"
-                    : "opacity-100"
-                }`}
-              >
-                <h3 className="text-xl font-semibold">
-                  {meditation.meditationScript.title}
-                </h3>
-                <div className="space-y-4">
-                  {meditation.meditationScript.segments.map(
-                    (segment, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg border p-4 transition-all duration-300 hover:border-blue-500/20 hover:bg-blue-500/5"
-                      >
-                        {segment.type === "speech" ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-blue-600">🗣️</span>
-                            <p className="text-gray-600">{segment.content}</p>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span className="text-emerald-600">⏸️</span>
-                            <p className="text-gray-600">
-                              {segment.duration} second pause - Take a deep
-                              breath
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-
-              {meditation.audioFilePath && generationStep === "complete" && (
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">Listen</h3>
-                  <audio
-                    controls
-                    className="w-full"
-                    src={meditation.audioFilePath}
-                  >
-                    Your browser does not support the audio element.
-                  </audio>
+            <div className="p-6">
+              {generationStep === "complete" ? (
+                <MeditationPlayer meditation={meditation} />
+              ) : (
+                <div
+                  className={`space-y-4 transition-opacity duration-500 ${
+                    generationStep === "generating-script"
+                      ? "opacity-0"
+                      : "opacity-100"
+                  }`}
+                >
+                  <h3 className="text-xl font-semibold">
+                    {meditation.meditationScript.title}
+                  </h3>
+                  <div className="space-y-4">
+                    {meditation.meditationScript.segments.map(
+                      (segment, index) => (
+                        <div
+                          key={index}
+                          className="rounded-lg border p-4 transition-all duration-300 hover:border-blue-500/20 hover:bg-blue-500/5"
+                        >
+                          {segment.type === "speech" ? (
+                            <div className="flex items-center gap-2">
+                              <span className="text-blue-600">🗣️</span>
+                              <p className="text-gray-600">{segment.content}</p>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="text-emerald-600">⏸️</span>
+                              <p className="text-gray-600">
+                                {segment.duration} second pause - Take a deep
+                                breath
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    )}
+                  </div>
                 </div>
               )}
             </div>
