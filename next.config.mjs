@@ -7,10 +7,11 @@ Configures Next.js for the app.
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    unoptimized: true,
+    domains: ['*'],
     remotePatterns: [
-      { hostname: "localhost" },
-      { hostname: "vercel.app" },
-      { hostname: "*.vercel.app" }
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' }
     ]
   },
   // Add experimental configuration
