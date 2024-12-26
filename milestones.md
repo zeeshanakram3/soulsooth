@@ -93,9 +93,9 @@ The app will allow users to input their current emotional state. It will then us
 **Tasks:**
 
 1. **User Authentication:** ✅
-    - Already implemented with Clerk ✅
-    - Login/signup pages already available at /login and /signup ✅
-    - Protected routes and API endpoints already secured with auth middleware ✅
+    -Already implemented with Clerk ✅
+    -Login/signup pages already available at /login and /signup ✅
+    -Protected routes and API endpoints already secured with auth middleware ✅
 
 2. **Frontend - User Dashboard:** ✅
     - Create a new route `app/dashboard` for the user dashboard ✅
@@ -117,48 +117,129 @@ The app will allow users to input their current emotional state. It will then us
 - Users can replay their past meditations ✅
 - History is paginated for better performance ✅
 
-### Phase 4: Landing Page and Navigation
+### Phase 4: Landing Page and Navigation ✅
 
-**Objective:** Create a focused landing page that highlights the meditation features and provides clear navigation to key functionality.
+**Objective:** Create a focused landing page and navigation for the meditation app.
 
 **Tasks:**
 
-1. **Landing Page Redesign:**
-    - Remove existing marketing/template content
-    - Create a new landing page that:
-        - Explains the meditation app's purpose
-        - Shows how to get started
-        - Highlights key features (personalized meditations, audio generation)
-    - Add clear call-to-action buttons for:
-        - "Start Meditating" (for logged-in users)
-        - "Sign Up" (for new users)
-        - "View History" (for logged-in users)
+1. **Landing Page:** ✅
+    - Create a simple landing page that:
+        - Explains the meditation app's purpose ✅
+        - Shows how to get started ✅
+    - Add clear call-to-action buttons: ✅
+        - "Start Meditating" (for logged-in users) ✅
+        - "Sign Up" (for new users) ✅
 
-2. **Navigation Updates:**
-    - Update the main navigation to include:
-        - Home (landing page)
-        - Meditate
-        - Dashboard (meditation history)
-        - Login/Signup (for logged-out users)
-        - User menu (for logged-in users)
-    - Ensure responsive design for mobile devices
-    - Add proper active states for current route
+2. **Navigation:** ✅
+    - Update the main navigation: ✅
+        - Home (landing page) ✅
+        - Meditate ✅
+        - Dashboard (meditation history) ✅
+        - Login/Signup (for logged-out users) ✅
+    - Ensure responsive design for mobile ✅
 
-3. **Route Protection:**
-    - Redirect logged-out users to login when accessing protected routes
-    - Redirect logged-in users to dashboard from login/signup pages
-    - Add loading states during auth checks
+3. **Route Protection:** ✅
+    - Redirect logged-out users to login ✅
+    - Add loading states during auth checks ✅
 
-4. **Cleanup:**
-    - Remove unused marketing routes and components
-    - Clean up unused assets and dependencies
-    - Update metadata and SEO information
+**Verification:** ✅
+
+- Landing page clearly communicates the app's purpose ✅
+- Users can easily navigate to key features ✅
+- Navigation updates based on auth state ✅
+- All routes are properly protected ✅
+
+### Phase 5: Structured Meditation with Pauses
+
+**Objective:** Create structured meditation scripts with timed pauses using JSON output format.
+
+**Tasks:**
+
+1. **Structured Script Generation:**
+    - Update the prompt to generate JSON-formatted meditation scripts with:
+        ```json
+        {
+          "title": "string",
+          "segments": [
+            {
+              "type": "speech",
+              "content": "string"
+            },
+            {
+              "type": "pause",
+              "duration": 10
+            }
+          ]
+        }
+        ```
+    - Configure OpenAI API to enforce JSON schema
+    - Target 30-second total meditation length
+    - Each pause segment will be 10 seconds
+
+2. **Audio Processing:**
+    - Parse JSON response to extract segments
+    - Generate audio files for speech segments using OpenAI TTS
+    - Create 10-second silent audio files for pause segments
+    - Combine segments in sequence
+    - Export as single meditation audio file
+
+3. **Backend Updates:**
+    - Modify `app/api/generate-meditation/route.ts` to:
+        - Request and validate JSON responses
+        - Process structured segments
+        - Handle audio generation per segment
+        - Manage file combining
+    - Update database schema to store structured script JSON
+
+4. **Frontend Updates:**
+    - Display speech and pause segments
+    - Update audio player UI to show:
+        - Current segment type (speech/pause)
+        - Progress through meditation
 
 **Verification:**
 
-- Landing page clearly communicates the app's purpose
-- Users can easily navigate to meditation and history features
-- Navigation updates based on auth state
-- All routes are properly protected
-- No unused code or assets remain
-- App maintains consistent styling and branding
+- Generated scripts follow JSON schema
+- Audio files include proper speech and silence segments
+- Total meditation length is approximately 30 seconds
+- Audio player reflects current segment
+- Database correctly stores structured format
+
+### Phase 6: Background Music Integration
+
+**Objective:** Add background music support to enhance meditation experience.
+
+**Tasks:**
+
+1. **Music Features:**
+    - Create a collection of meditation background tracks
+    - Implement volume control for background music
+    - Add music selection interface
+    - Store user music preferences
+
+2. **Audio Processing:**
+    - Add background music layer to meditation audio
+    - Balance voice and music volumes
+    - Ensure smooth transitions between segments
+    - Fade music in/out at start/end
+
+3. **Backend Updates:**
+    - Add music file management
+    - Update audio processing to mix music
+    - Store music selection in database
+    - Handle music file cleanup
+
+4. **Frontend Updates:**
+    - Add music selection UI
+    - Display current music track
+    - Add volume controls
+    - Show music progress
+
+**Verification:**
+
+- Users can select background music
+- Music volume is balanced with voice
+- Transitions are smooth
+- Music preferences are saved
+- Audio player shows music information

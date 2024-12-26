@@ -4,12 +4,13 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
+import { MeditationScript } from "@/db/schema"
 
 export default function MeditatePage() {
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
   const [meditation, setMeditation] = useState<{
-    meditationScript: string
+    meditationScript: MeditationScript
     audioFilePath?: string | null
   } | null>(null)
 
@@ -67,10 +68,28 @@ export default function MeditatePage() {
         {meditation && (
           <Card className="space-y-6 p-6">
             <div>
-              <h3 className="mb-2 text-lg font-semibold">Your Meditation</h3>
-              <p className="whitespace-pre-wrap text-gray-600">
-                {meditation.meditationScript}
-              </p>
+              <h3 className="mb-4 text-xl font-semibold">
+                {meditation.meditationScript.title}
+              </h3>
+              <div className="space-y-4">
+                {meditation.meditationScript.segments.map((segment, index) => (
+                  <div key={index} className="rounded-lg border p-4">
+                    {segment.type === "speech" ? (
+                      <div className="flex items-center gap-2">
+                        <span className="text-blue-600">🗣️</span>
+                        <p className="text-gray-600">{segment.content}</p>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <span className="text-emerald-600">⏸️</span>
+                        <p className="text-gray-600">
+                          {segment.duration} second pause - Take a deep breath
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
 
             {meditation.audioFilePath && (

@@ -1,9 +1,14 @@
 import { createMeditationAction } from "@/actions/db/meditations-actions"
+import { MeditationScript } from "@/db/schema"
 import { auth } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 import OpenAI from "openai"
 import fs from "fs"
 import path from "path"
+import { exec } from "child_process"
+import { promisify } from "util"
+
+const execAsync = promisify(exec)
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -33,20 +38,41 @@ export async function POST(req: Request) {
       )
     }
 
-    // Generate meditation script using GPT-4o-mini
+    // Generate structured meditation script using GPT-4o-mini
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content:
-            "You are a meditation guide. Generate a calming and personalized meditation script based on the user's current emotional state or needs. The script should be about 30 seconds long when read aloud. So just 3 lines should be enough. Focus on breathing, mindfulness, and addressing their specific situation."
+          content: `You are a meditation guide. Generate a structured meditation script based on the user's current emotional state or needs.
+          The script should be formatted as JSON with the following structure:
+          {
+            "title": "A brief title for the meditation",
+            "segments": [
+              {
+                "type": "speech",
+                "content": "The meditation narration"
+              },
+              {
+                "type": "pause",
+                "duration": 10
+              }
+            ]
+          }
+          Rules:
+          - The total meditation should be about 30 seconds when read aloud
+          - Include 2-3 speech segments with a pause between each
+          - Each pause should be 10 seconds
+          - Speech segments should be calming and focused on breathing and mindfulness
+          - Address their specific situation in the content
+          - Return ONLY valid JSON, no other text`
         },
         {
           role: "user",
           content: userInput
         }
-      ]
+      ],
+      response_format: { type: "json_object" }
     })
 
     const meditationScript = completion.choices[0]?.message?.content
@@ -60,36 +86,87 @@ export async function POST(req: Request) {
       )
     }
 
+    // Parse and validate the meditation script
+    let parsedScript: MeditationScript
+    try {
+      parsedScript = JSON.parse(meditationScript)
+      if (!parsedScript.title || !Array.isArray(parsedScript.segments)) {
+        throw new Error("Invalid script format")
+      }
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Invalid meditation script format" },
+        {
+          status: 500
+        }
+      )
+    }
+
     // Create public/audio directory if it doesn't exist
     const audioDir = path.join(process.cwd(), "public", "audio")
     if (!fs.existsSync(audioDir)) {
       fs.mkdirSync(audioDir, { recursive: true })
     }
 
-    // Generate speech using OpenAI TTS
-    const mp3 = await openai.audio.speech.create({
-      model: "tts-1",
-      voice: "alloy",
-      input: meditationScript
-    })
+    // Generate a unique base filename
+    const baseFilename = `meditation-${Date.now()}`
 
-    // Get the binary audio data
-    const buffer = Buffer.from(await mp3.arrayBuffer())
+    // Process each segment
+    const segmentFiles: string[] = []
+    for (let i = 0; i < parsedScript.segments.length; i++) {
+      const segment = parsedScript.segments[i]
+      const segmentPath = path.join(
+        audioDir,
+        `${baseFilename}-segment-${i}.mp3`
+      )
 
-    // Generate a unique filename
-    const filename = `meditation-${Date.now()}.mp3`
-    const filepath = path.join(audioDir, filename)
+      if (segment.type === "speech") {
+        // Generate speech audio for speech segments
+        const mp3 = await openai.audio.speech.create({
+          model: "tts-1",
+          voice: "alloy",
+          input: segment.content
+        })
+        const buffer = Buffer.from(await mp3.arrayBuffer())
+        const tempPath = path.join(audioDir, `${baseFilename}-temp-${i}.mp3`)
+        fs.writeFileSync(tempPath, buffer)
 
-    // Save the audio file
-    fs.writeFileSync(filepath, buffer)
+        // Normalize the audio properties
+        await execAsync(
+          `ffmpeg -i "${tempPath}" -ar 44100 -ac 2 -b:a 192k "${segmentPath}"`
+        )
+        fs.unlinkSync(tempPath)
+      } else if (segment.type === "pause") {
+        // Generate silence with matching audio properties
+        await execAsync(
+          `ffmpeg -f lavfi -i anullsrc=r=44100:cl=stereo -t ${segment.duration} -b:a 192k -ar 44100 -ac 2 "${segmentPath}"`
+        )
+      }
+      segmentFiles.push(segmentPath)
+    }
 
-    // Get the relative path to the audio file
-    const audioPath = `/audio/${filename}`
+    // Create a file list for ffmpeg
+    const concatListPath = path.join(audioDir, `${baseFilename}-list.txt`)
+    const concatList = segmentFiles.map(file => `file '${file}'`).join("\n")
+    fs.writeFileSync(concatListPath, concatList)
+
+    // Combine all segments using ffmpeg with consistent encoding
+    const finalPath = path.join(audioDir, `${baseFilename}.mp3`)
+    await execAsync(
+      `ffmpeg -f concat -safe 0 -i "${concatListPath}" -ar 44100 -ac 2 -b:a 192k "${finalPath}"`
+    )
+
+    // Clean up segment files and concat list
+    segmentFiles.forEach(file => fs.unlinkSync(file))
+    fs.unlinkSync(concatListPath)
+
+    // Get the relative path to the final audio file
+    const audioPath = `/audio/${baseFilename}.mp3`
 
     const result = await createMeditationAction({
       userId,
       userInput,
-      meditationScript,
+      meditationScript: parsedScript,
       audioFilePath: audioPath
     })
 
