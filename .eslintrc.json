@@ -19,14 +19,16 @@ Contains the ESLint configuration for the app.
     "react-hooks/exhaustive-deps": "off",
     "tailwindcss/enforces-negative-arbitrary-values": "off",
     "tailwindcss/no-contradicting-classname": "off",
-    "tailwindcss/no-custom-classname": "off",
+    "tailwindcss/no-custom-classname": "warn",
     "tailwindcss/no-unnecessary-arbitrary-value": "off",
-    "react/no-unescaped-entities": "off"
+    "react/no-unescaped-entities": "off",
+    "tailwindcss/classnames-order": "warn",
+    "tailwindcss/enforces-shorthand": "warn"
   },
   "settings": {
     "tailwindcss": {
       "callees": ["cn", "cva"],
-      "config": "tailwind.config.js"
+      "config": "tailwind.config.ts"
     }
   },
   "overrides": [

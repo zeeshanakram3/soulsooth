@@ -7,8 +7,7 @@ Configures Next.js for the app.
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['localhost'],
-    unoptimized: true
+    remotePatterns: [{ hostname: "localhost" }]
   },
   // Add experimental configuration
   experimental: {
