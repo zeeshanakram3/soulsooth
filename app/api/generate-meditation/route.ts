@@ -31,7 +31,11 @@ export async function POST(req: Request) {
       )
     }
 
-    const { userInput, musicVolume = DEFAULT_MUSIC_VOLUME } = await req.json()
+    const {
+      userInput,
+      musicVolume = DEFAULT_MUSIC_VOLUME,
+      durationMinutes = 5
+    } = await req.json()
     if (!userInput) {
       return NextResponse.json(
         { error: "User input is required" },
@@ -41,8 +45,14 @@ export async function POST(req: Request) {
       )
     }
 
-    // Validate music volume
+    // Validate music volume and duration
     const validatedVolume = Math.max(0, Math.min(1, Number(musicVolume)))
+    const validatedDuration = Math.max(1, Math.min(10, Number(durationMinutes)))
+
+    // Calculate target word count and segments based on duration
+    const targetWordCount = validatedDuration * 150
+    const numSegments =
+      validatedDuration <= 2 ? 4 : validatedDuration <= 5 ? 8 : 12
 
     // Generate structured meditation script using GPT-4o-mini
     const completion = await openai.chat.completions.create({
@@ -54,23 +64,29 @@ export async function POST(req: Request) {
           The script should be formatted as JSON with the following structure:
           {
             "title": "string",
+            "targetWordCount": number,
+            "actualWordCount": number,
+            "durationMinutes": number,
             "segments": [
               {
                 "type": "speech",
-                "content": "string"
+                "content": "string",
+                "wordCount": number,
+                "duration": number
               },
               {
                 "type": "pause",
-                "duration": 10
+                "duration": number
               }
             ]
           }
           Rules:
-          - The total meditation should be about 30 seconds when read aloud
-          - Include 2-3 speech segments with a pause between each
-          - Each pause should be 10 seconds
+          - Generate a ${validatedDuration}-minute meditation with approximately ${targetWordCount} words
+          - Include ${numSegments} segments, alternating between speech and pause
+          - Each pause should be 30 seconds
           - Speech segments should be calming and focused on breathing and mindfulness
           - Address their specific situation in the content
+          - End with a gentle positive reinforcement that makes the user feel accomplished
           - Return ONLY valid JSON, no other text`
         },
         {

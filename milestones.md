@@ -230,3 +230,88 @@ The app will allow users to input their current emotional state. It will then us
 - Volume slider adjusts music intensity in real-time
 - Audio quality remains high after mixing
 - User volume preferences persist between sessions
+
+### Phase 7: Meditation Duration Selection
+
+**Objective:** Implement meditation duration selection to allow users to choose their preferred meditation length.
+
+**Tasks:**
+
+1. **Duration Selection UI:** ✅
+    - Add duration selection buttons in `app/meditate/_components/user-input-form.tsx`:
+        - 1 minute
+        - 2 minutes
+        - 5 minutes
+        - 10 minutes
+    - Style buttons to be visually appealing and clear
+    - Show selected duration prominently
+    - Store selected duration in form state
+
+2. **Prompt Engineering:**
+    - Update OpenAI prompt in `app/api/generate-meditation/route.ts` to:
+        - Calculate target word count based on duration (150 words per minute)
+            - 1 minute ≈ 150 words
+            - 2 minutes ≈ 300 words
+            - 5 minutes ≈ 750 words
+            - 10 minutes ≈ 1500 words
+        - Adjust number of segments based on duration:
+            - Short (1-2 min): 3-4 segments
+            - Medium (5 min): 6-8 segments
+            - Long (10 min): 10-12 segments
+        - Include subtle positive reinforcement at meditation end
+        - Example prompt structure:
+            ```
+            Generate a {duration}-minute meditation script with approximately {duration * 150} words.
+            Structure the content with {n} segments, alternating between speech and pauses.
+            End with a gentle positive reinforcement that makes the user feel accomplished.
+            Format the response as JSON with the following structure:
+            ```
+        - Example segment structure for 5 minutes:
+            ```json
+            {
+              "title": "5-Minute Calm",
+              "targetWordCount": 750,
+              "actualWordCount": 742,
+              "duration": 300,
+              "segments": [
+                {
+                  "type": "speech",
+                  "content": "Welcome to your meditation. Find a comfortable position...",
+                  "wordCount": 120,
+                  "duration": 30
+                },
+                {
+                  "type": "pause",
+                  "duration": 30
+                },
+                // ... middle segments ...
+                {
+                  "type": "speech",
+                  "content": "You've done wonderfully. Take a moment to appreciate the peace you've created within yourself. As you prepare to return to your day, carry this sense of calm with you.",
+                  "wordCount": 100,
+                  "duration": 25
+                }
+              ]
+            }
+            ```
+
+3. **Duration Display:**
+    - Add duration display component
+    - Show total meditation length
+    - Display remaining time during playback
+    - Use clean, minimal design
+
+4. **Testing and Verification:**
+    - Test all duration options (1, 2, 5, 10 minutes)
+    - Verify content length matches selected duration
+    - Check segment distribution is appropriate for each duration
+    - Validate positive ending messages
+    - Test user experience across different durations
+
+**Verification:**
+
+- Users can select from 1, 2, 5, or 10 minute options
+- Generated content matches selected duration
+- Meditation script adapts appropriately to chosen length
+- Ending messages provide positive reinforcement
+- Duration is clearly displayed during meditation

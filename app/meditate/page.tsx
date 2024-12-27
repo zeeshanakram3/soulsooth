@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { MeditationScript } from "@/db/schema"
 import VolumeSlider from "./_components/volume-slider"
+import DurationSelector from "./_components/duration-selector"
 import { Loader2, Music, Sparkles, Volume2 } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import MeditationPlayer from "./_components/meditation-player"
@@ -21,6 +22,7 @@ type GenerationStep =
 export default function MeditatePage() {
   const [input, setInput] = useState("")
   const [musicVolume, setMusicVolume] = useState(0.3)
+  const [duration, setDuration] = useState(5)
   const [generationStep, setGenerationStep] = useState<GenerationStep>("idle")
   const [progress, setProgress] = useState(0)
   const [meditation, setMeditation] = useState<{
@@ -88,7 +90,8 @@ export default function MeditatePage() {
         },
         body: JSON.stringify({
           userInput: input,
-          musicVolume
+          musicVolume,
+          duration
         })
       })
 
@@ -136,10 +139,18 @@ export default function MeditatePage() {
               className="min-h-[100px]"
               disabled={isLoading}
             />
+
+            <DurationSelector
+              duration={duration}
+              onChange={setDuration}
+              disabled={isLoading}
+            />
+
             <VolumeSlider
               defaultVolume={musicVolume}
               onChange={setMusicVolume}
             />
+
             <Button
               type="submit"
               disabled={isLoading || !input.trim()}
@@ -208,9 +219,14 @@ export default function MeditatePage() {
                       : "opacity-100"
                   }`}
                 >
-                  <h3 className="text-xl font-semibold">
-                    {meditation.meditationScript.title}
-                  </h3>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xl font-semibold">
+                      {meditation.meditationScript.title}
+                    </h3>
+                    <span className="text-muted-foreground text-sm">
+                      {duration} minute meditation
+                    </span>
+                  </div>
                   <div className="space-y-4">
                     {meditation.meditationScript.segments.map(
                       (segment, index) => (

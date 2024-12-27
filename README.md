@@ -127,6 +127,9 @@ Key learnings from implementing the meditation app:
 - Store API responses properly with error handling
 - Use appropriate system prompts for consistent output
 - Keep prompts focused and specific for better results
+- Adjust content length based on target duration (150 words per minute)
+- Structure segments appropriately for different meditation lengths
+- Include positive reinforcement at the end of each meditation
 
 ### 3. Database & File Management
 

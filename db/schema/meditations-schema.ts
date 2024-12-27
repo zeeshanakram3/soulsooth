@@ -15,10 +15,15 @@ export const meditationsTable = pgTable("meditations", {
 
 export interface MeditationScript {
   title: string
+  targetWordCount: number
+  actualWordCount: number
+  durationMinutes: number
   segments: Array<
     | {
         type: "speech"
         content: string
+        wordCount: number
+        duration: number
       }
     | {
         type: "pause"
