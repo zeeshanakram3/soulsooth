@@ -14,6 +14,13 @@ interface MeditationPlayerProps {
   }
 }
 
+// Helper function to format time in MM:SS
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60)
+  const secs = Math.floor(seconds % 60)
+  return `${mins}:${secs.toString().padStart(2, "0")}`
+}
+
 export default function MeditationPlayer({
   meditation
 }: MeditationPlayerProps) {
@@ -23,6 +30,8 @@ export default function MeditationPlayer({
   const [segmentTimes, setSegmentTimes] = useState<
     Array<{ start: number; duration: number }>
   >([])
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration] = useState(0)
 
   // Calculate actual audio duration and update segment times
   useEffect(() => {
@@ -114,6 +123,42 @@ export default function MeditationPlayer({
     }
   }, [segmentTimes])
 
+  useEffect(() => {
+    const audio = audioRef.current
+    if (!audio) return
+
+    const updateTime = () => {
+      setCurrentTime(audio.currentTime)
+    }
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration)
+      // ... existing segment time calculations ...
+    }
+
+    audio.addEventListener("timeupdate", updateTime)
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata)
+    audio.addEventListener("play", () => setIsPlaying(true))
+    audio.addEventListener("pause", () => setIsPlaying(false))
+    audio.addEventListener("ended", () => {
+      setIsPlaying(false)
+      setCurrentSegmentIndex(0)
+      setCurrentTime(0)
+    })
+
+    return () => {
+      audio.removeEventListener("timeupdate", updateTime)
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata)
+      audio.removeEventListener("play", () => setIsPlaying(true))
+      audio.removeEventListener("pause", () => setIsPlaying(false))
+      audio.removeEventListener("ended", () => {
+        setIsPlaying(false)
+        setCurrentSegmentIndex(0)
+        setCurrentTime(0)
+      })
+    }
+  }, [segmentTimes])
+
   const togglePlayPause = () => {
     const audio = audioRef.current
     if (!audio) return
@@ -136,41 +181,28 @@ export default function MeditationPlayer({
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold">
-          {meditation.meditationScript.title}
-        </h3>
         <Button
-          variant="ghost"
+          variant="outline"
           size="icon"
           onClick={togglePlayPause}
-          className="relative size-12 rounded-full hover:bg-blue-50 hover:text-blue-600"
+          className="size-12 rounded-full"
         >
-          <AnimatePresence mode="wait" initial={false}>
-            {isPlaying ? (
-              <motion.div
-                key="pause"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.5, opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                <Pause className="size-6" />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="play"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.5, opacity: 0 }}
-                transition={{ duration: 0.15 }}
-                className="absolute inset-0 flex items-center justify-center"
-              >
-                <Play className="size-6" />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {isPlaying ? (
+            <Pause className="size-5" />
+          ) : (
+            <Play className="size-5 pl-1" />
+          )}
         </Button>
+        <div className="text-muted-foreground text-sm">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </div>
+      </div>
+
+      <div className="bg-secondary relative h-1 w-full overflow-hidden rounded-full">
+        <div
+          className="h-full bg-blue-600 transition-all duration-100"
+          style={{ width: `${(currentTime / duration) * 100}%` }}
+        />
       </div>
 
       <div className="space-y-4">

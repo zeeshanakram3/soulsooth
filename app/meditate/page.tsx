@@ -91,7 +91,7 @@ export default function MeditatePage() {
         body: JSON.stringify({
           userInput: input,
           musicVolume,
-          duration
+          durationMinutes: duration
         })
       })
 

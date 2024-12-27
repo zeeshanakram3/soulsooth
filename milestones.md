@@ -315,3 +315,30 @@ The app will allow users to input their current emotional state. It will then us
 - Meditation script adapts appropriately to chosen length
 - Ending messages provide positive reinforcement
 - Duration is clearly displayed during meditation
+
+### Phase 8: Performance Optimizations
+
+**Objective:** Reduce meditation generation time from ~37s to ~20s.
+
+**Tasks:**
+
+1. **TTS Parallelization:**
+    - Current: Sequential TTS (~25s)
+    - Solution: Parallel TTS using Promise.all()
+    - Expected: ~10s (60% faster)
+
+2. **FFmpeg Optimization:**
+    - Current: Multiple operations (~5s)
+        ```
+        Audio Normalization: ~400ms × 3
+        Segments Combination: ~1.1s
+        Background Music: ~1.3s
+        Final Mixing: ~1.4s
+        ```
+    - Solution: Combine operations and optimize filters
+    - Expected: ~4s (20% faster)
+
+**Verification:**
+- Total time: ~37s → ~20s
+- No quality loss
+- Stable across durations
