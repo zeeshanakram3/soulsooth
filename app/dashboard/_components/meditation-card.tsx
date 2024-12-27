@@ -2,89 +2,68 @@
 
 import { MeditationScript, SelectMeditation } from "@/db/schema"
 import { formatDate } from "@/lib/utils"
-import VolumeSlider from "@/app/meditate/_components/volume-slider"
-import { useState, useRef, useEffect } from "react"
+import { useState } from "react"
+import { Card } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { ChevronDown, ChevronUp } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
+import MeditationPlayer from "@/app/meditate/_components/meditation-player"
 
 interface MeditationCardProps {
-  meditation: SelectMeditation
+  meditation: SelectMeditation & { meditationScript: MeditationScript }
 }
 
 export default function MeditationCard({ meditation }: MeditationCardProps) {
-  const meditationScript = meditation.meditationScript as MeditationScript
-  const audioRef = useRef<HTMLAudioElement>(null)
-  const [volume, setVolume] = useState(0.15)
-
-  // Load saved volume from localStorage on mount
-  useEffect(() => {
-    const savedVolume = localStorage.getItem("meditation-music-volume")
-    if (savedVolume && audioRef.current) {
-      const parsedVolume = parseFloat(savedVolume)
-      setVolume(parsedVolume)
-      handleVolumeChange(parsedVolume)
-    }
-  }, [])
-
-  const handleVolumeChange = (newVolume: number) => {
-    setVolume(newVolume)
-    if (audioRef.current) {
-      // Adjust background music volume in real-time
-      const backgroundVolume = newVolume
-      const voiceVolume = 1 // Keep voice volume constant
-      audioRef.current.volume = Math.min(1, voiceVolume + backgroundVolume)
-    }
-  }
+  const [isExpanded, setIsExpanded] = useState(false)
 
   return (
-    <div className="space-y-4 rounded-lg border p-4">
-      <div className="flex items-center justify-between">
-        <div className="text-muted-foreground text-sm">
-          {formatDate(meditation.createdAt)}
+    <Card className="overflow-hidden">
+      <div className="p-6">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            <h3 className="font-semibold">
+              {meditation.meditationScript?.title || "Untitled Meditation"}
+            </h3>
+            <p className="text-muted-foreground text-sm">
+              {formatDate(meditation.createdAt)}
+            </p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="shrink-0"
+          >
+            {isExpanded ? (
+              <ChevronUp className="size-4" />
+            ) : (
+              <ChevronDown className="size-4" />
+            )}
+          </Button>
         </div>
-        <div className="text-muted-foreground text-sm">
-          {meditationScript?.title || "Untitled Meditation"}
-        </div>
-      </div>
 
-      <div className="space-y-2">
-        <h3 className="font-medium">Your Input</h3>
-        <p className="text-muted-foreground">{meditation.userInput}</p>
-      </div>
-
-      <div className="space-y-2">
-        <h3 className="font-medium">Meditation Segments</h3>
-        <div className="space-y-2">
-          {meditationScript?.segments?.map((segment, index) => (
-            <div key={index} className="rounded border p-2">
-              {segment.type === "speech" ? (
-                <div className="flex items-center gap-2">
-                  <span className="text-blue-600">🗣️</span>
-                  <p className="text-muted-foreground">{segment.content}</p>
-                </div>
-              ) : (
-                <div className="flex items-center gap-2">
-                  <span className="text-emerald-600">⏸️</span>
-                  <p className="text-muted-foreground">
-                    {segment.duration} second pause
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+        <div className="mt-4">
+          <p className="text-muted-foreground line-clamp-2 text-sm">
+            {meditation.userInput}
+          </p>
         </div>
-      </div>
 
-      {meditation.audioFilePath && (
-        <div className="space-y-4">
-          <VolumeSlider defaultVolume={volume} onChange={handleVolumeChange} />
-          <audio
-            ref={audioRef}
-            controls
-            src={meditation.audioFilePath}
-            className="w-full"
-            onPlay={() => handleVolumeChange(volume)} // Apply volume when playback starts
-          />
-        </div>
-      )}
-    </div>
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-6 border-t pt-6">
+                <MeditationPlayer meditation={meditation} />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </Card>
   )
 }

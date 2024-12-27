@@ -16,7 +16,7 @@ export default async function LandingPage() {
           <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
             Welcome Back to{" "}
             <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-              MindfulAI
+              MeditateGPT
             </span>
           </h1>
           <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg sm:text-xl">
@@ -76,15 +76,15 @@ export default async function LandingPage() {
     <div className="container">
       <section className="py-20 text-center">
         <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl">
-          AI-Powered Personal{" "}
+          Welcome to{" "}
           <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-            Meditation Guide
+            MeditateGPT
           </span>
         </h1>
         <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg sm:text-xl">
-          Experience personalized meditation sessions tailored to your emotional
-          state. Let AI guide you to mindfulness with custom scripts and
-          soothing audio.
+          Your personal AI meditation guide. Share your emotional state and let
+          MeditateGPT create a custom meditation experience with personalized
+          scripts and soothing audio guidance.
         </p>
         <SignUpButton mode="modal">
           <Button size="lg" className="gap-2">

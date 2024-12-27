@@ -23,8 +23,12 @@ export default async function DashboardPage({
   const page = params.page ? parseInt(params.page) : 1
 
   return (
-    <div className="container py-8">
+    <div className="container mx-auto px-4 py-8">
       <h1 className="mb-8 text-4xl font-bold">Your Meditation History</h1>
+      <p className="text-muted-foreground mb-8 text-lg">
+        Review and replay your past meditation sessions. Click on any meditation
+        to expand and listen to it again.
+      </p>
 
       <Suspense fallback={<MeditationHistorySkeleton />}>
         <MeditationHistory userId={userId} page={page} />

@@ -1,6 +1,6 @@
-# Mckay's App Template
+# MeditateGPT
 
-This is a full-stack app template for courses on [Takeoff](https://JoinTakeoff.com/).
+Experience personalized AI-powered meditation sessions tailored to your emotional state. MeditateGPT uses advanced AI to create custom meditation scripts and soothing audio guidance just for you.
 
 ## Sponsors
 
