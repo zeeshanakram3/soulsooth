@@ -15,8 +15,10 @@ type GenerationStep =
   | "idle"
   | "generating-script"
   | "script-ready"
-  | "generating-audio"
-  | "mixing-audio"
+  | "generating-speech"
+  | "generating-silence"
+  | "combining-audio"
+  | "adding-music"
   | "complete"
 
 export default function MeditatePage() {
@@ -25,6 +27,7 @@ export default function MeditatePage() {
   const [duration, setDuration] = useState(5)
   const [generationStep, setGenerationStep] = useState<GenerationStep>("idle")
   const [progress, setProgress] = useState(0)
+  const [targetProgress, setTargetProgress] = useState(0)
   const [meditation, setMeditation] = useState<{
     meditationScript: MeditationScript
     audioFilePath?: string | null
@@ -35,28 +38,37 @@ export default function MeditatePage() {
   // Smooth progress animation
   useEffect(() => {
     let interval: NodeJS.Timeout
-    let targetProgress = 0
 
+    // Update target progress based on step
+    let newTarget = 0
     switch (generationStep) {
       case "generating-script":
-        targetProgress = 40
+        newTarget = Math.max(15, targetProgress)
         break
       case "script-ready":
-        targetProgress = 50
+        newTarget = Math.max(20, targetProgress)
         break
-      case "generating-audio":
-        targetProgress = 80
+      case "generating-speech":
+        newTarget = Math.max(60, targetProgress)
         break
-      case "mixing-audio":
-        targetProgress = 95
+      case "generating-silence":
+        newTarget = Math.max(70, targetProgress)
+        break
+      case "combining-audio":
+        newTarget = Math.max(85, targetProgress)
+        break
+      case "adding-music":
+        newTarget = Math.max(95, targetProgress)
         break
       case "complete":
-        targetProgress = 100
+        newTarget = 100
         break
       default:
-        targetProgress = 0
+        newTarget = 0
     }
+    setTargetProgress(newTarget)
 
+    // Smoothly animate to target
     if (progress < targetProgress) {
       interval = setInterval(() => {
         setProgress(current => {
@@ -64,12 +76,10 @@ export default function MeditatePage() {
           return next <= targetProgress ? next : current
         })
       }, 50)
-    } else if (progress > targetProgress) {
-      setProgress(targetProgress)
     }
 
     return () => clearInterval(interval)
-  }, [generationStep, progress])
+  }, [generationStep, progress, targetProgress])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -79,10 +89,10 @@ export default function MeditatePage() {
       // Reset state
       setMeditation(null)
       setProgress(0)
+      setTargetProgress(0)
       setGenerationStep("generating-script")
 
-      // Start script generation
-      const startTime = Date.now()
+      // Start script generation with streaming response
       const response = await fetch("/api/generate-meditation", {
         method: "POST",
         headers: {
@@ -95,29 +105,46 @@ export default function MeditatePage() {
         })
       })
 
-      const data = await response.json()
-
       if (!response.ok) {
-        throw new Error(data.error || "Failed to generate meditation")
+        throw new Error("Failed to generate meditation")
       }
 
-      // Calculate how long the script generation took
-      const scriptGenerationTime = Date.now() - startTime
+      // Set up event source for progress updates
+      const reader = response.body?.getReader()
+      if (!reader) throw new Error("No response body")
 
-      // Show script
-      setGenerationStep("script-ready")
-      setMeditation(data.data)
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
 
-      // Adjust timing based on script generation time
-      const audioGenerationDelay = Math.max(2000, scriptGenerationTime / 2)
-      const mixingDelay = Math.max(1000, scriptGenerationTime / 4)
+        const text = new TextDecoder().decode(value)
+        const updates = text.split("\n").filter(Boolean)
 
-      // Simulate remaining steps with proportional timing
-      setGenerationStep("generating-audio")
-      await new Promise(resolve => setTimeout(resolve, audioGenerationDelay))
-      setGenerationStep("mixing-audio")
-      await new Promise(resolve => setTimeout(resolve, mixingDelay))
-      setGenerationStep("complete")
+        for (const update of updates) {
+          try {
+            const data = JSON.parse(update)
+
+            if (data.type === "script") {
+              // Show script immediately when it's generated
+              setGenerationStep("script-ready")
+              setMeditation(data.meditation)
+            } else if (data.type === "progress") {
+              // Update progress based on backend status
+              setGenerationStep(data.step as GenerationStep)
+              // Only update target if it's higher than current
+              setTargetProgress(prev => Math.max(prev, data.progress))
+            } else if (data.type === "complete") {
+              // Update final meditation data
+              setGenerationStep("complete")
+              setTargetProgress(100)
+              setMeditation(data.meditation)
+              break
+            }
+          } catch (e) {
+            console.error("Error parsing update:", e)
+          }
+        }
+      }
     } catch (error) {
       console.error("Error:", error)
       setGenerationStep("idle")
@@ -162,10 +189,14 @@ export default function MeditatePage() {
                   {generationStep === "generating-script" &&
                     "Crafting your meditation..."}
                   {generationStep === "script-ready" && "Processing..."}
-                  {generationStep === "generating-audio" &&
+                  {generationStep === "generating-speech" &&
                     "Generating voice..."}
-                  {generationStep === "mixing-audio" &&
-                    "Adding background music..."}
+                  {generationStep === "generating-silence" &&
+                    "Adding mindful pauses..."}
+                  {generationStep === "combining-audio" &&
+                    "Combining audio segments..."}
+                  {generationStep === "adding-music" &&
+                    "Adding soothing background music..."}
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
@@ -183,16 +214,28 @@ export default function MeditatePage() {
                     {generationStep === "generating-script" && (
                       <>
                         <Sparkles className="size-4" />
-                        Crafting personalized meditation script
+                        Crafting your personalized meditation script
                       </>
                     )}
-                    {generationStep === "generating-audio" && (
+                    {generationStep === "generating-speech" && (
                       <>
                         <Volume2 className="size-4" />
                         Converting script to calming voice
                       </>
                     )}
-                    {generationStep === "mixing-audio" && (
+                    {generationStep === "generating-silence" && (
+                      <>
+                        <Volume2 className="size-4" />
+                        Adding mindful pauses
+                      </>
+                    )}
+                    {generationStep === "combining-audio" && (
+                      <>
+                        <Music className="size-4" />
+                        Combining audio segments
+                      </>
+                    )}
+                    {generationStep === "adding-music" && (
                       <>
                         <Music className="size-4" />
                         Adding soothing background music
@@ -209,6 +252,15 @@ export default function MeditatePage() {
         {meditation && (
           <Card className="overflow-hidden">
             <div className="p-6">
+              <div className="mb-6 flex items-center justify-between">
+                <h3 className="text-xl font-semibold">
+                  {meditation.meditationScript.title}
+                </h3>
+                <span className="text-muted-foreground text-sm">
+                  {duration} minute meditation
+                </span>
+              </div>
+
               {generationStep === "complete" ? (
                 <MeditationPlayer meditation={meditation} />
               ) : (
@@ -219,14 +271,6 @@ export default function MeditatePage() {
                       : "opacity-100"
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-semibold">
-                      {meditation.meditationScript.title}
-                    </h3>
-                    <span className="text-muted-foreground text-sm">
-                      {duration} minute meditation
-                    </span>
-                  </div>
                   <div className="space-y-4">
                     {meditation.meditationScript.segments.map(
                       (segment, index) => (
@@ -260,10 +304,10 @@ export default function MeditatePage() {
               <div className="bg-muted/50 flex items-center gap-4 border-t px-6 py-4">
                 <Loader2 className="size-4 animate-spin" />
                 <span className="text-muted-foreground text-sm">
-                  {generationStep === "generating-audio" &&
+                  {generationStep === "generating-speech" &&
                     "Converting meditation script to soothing voice..."}
-                  {generationStep === "mixing-audio" &&
-                    "Adding calming background music..."}
+                  {generationStep === "adding-music" &&
+                    "Adding soothing background music..."}
                 </span>
               </div>
             )}

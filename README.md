@@ -153,6 +153,23 @@ Key learnings from implementing the meditation app:
 - Keep environment variables secure
 - Never expose API keys to the client
 
+### 6. Performance Optimization
+
+- Use Promise.all() for parallel TTS generation
+- Split meditation segments by type for efficient processing
+- Maintain segment order with index tracking
+- Process speech and pause segments concurrently
+- Show immediate feedback with early script display
+- Use TransformStream for real-time progress updates
+- Send granular progress updates from backend
+- Match status messages to actual processing steps
+- Handle streaming responses with error boundaries
+- Combine parallel operations with proper error handling
+- Display progress updates that reflect real processing time
+- Balance user experience with processing requirements
+- Use streaming responses for long-running operations
+- Provide immediate feedback while processing continues
+
 ### Important Notes
 
 1. **Environment Setup**

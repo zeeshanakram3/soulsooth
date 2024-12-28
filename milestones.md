@@ -318,16 +318,38 @@ The app will allow users to input their current emotional state. It will then us
 
 ### Phase 8: Performance Optimizations
 
-**Objective:** Reduce meditation generation time from ~37s to ~20s.
+**Objective:** Reduce meditation generation time from ~37s to ~20s and improve user experience.
 
 **Tasks:**
 
-1. **TTS Parallelization:**
-    - Current: Sequential TTS (~25s)
+1. **TTS Parallelization:** ✅
+    - Previous: Sequential TTS (~25s)
     - Solution: Parallel TTS using Promise.all()
     - Expected: ~10s (60% faster)
+    - Implementation:
+        - Split segments into speech and pause arrays
+        - Process all speech segments in parallel
+        - Process all pause segments in parallel
+        - Combine results in correct order
 
-2. **FFmpeg Optimization:**
+2. **Progress Display Optimization:** ✅
+    - Previous: Script hidden until audio complete
+    - Solution: Real-time progress updates with streaming response
+    - Implementation:
+        - Use TransformStream for real-time updates
+        - Show script immediately after generation (~2-3s)
+        - Send granular progress updates:
+            - Script Generation: 0-15%
+            - Script Ready: 15-20%
+            - Speech Generation: 20-60% (with per-segment updates)
+            - Silence Generation: 60-70%
+            - Audio Combining: 70-85%
+            - Music Addition: 85-95%
+            - Completion: 95-100%
+        - Handle errors gracefully with error messages
+        - Maintain smooth progress animation
+
+3. **FFmpeg Optimization:**
     - Current: Multiple operations (~5s)
         ```
         Audio Normalization: ~400ms × 3
@@ -340,5 +362,8 @@ The app will allow users to input their current emotional state. It will then us
 
 **Verification:**
 - Total time: ~37s → ~20s
+- Script appears within 3s
+- Progress accurately reflects processing stages
+- Real-time updates from backend
 - No quality loss
 - Stable across durations
