@@ -368,41 +368,80 @@ The app will allow users to input their current emotional state. It will then us
 - No quality loss
 - Stable across durations
 
-### Phase 9: Session-Based BYOK with Free Credits
+### Phase 9A: Meditation Credits System ✅
 
-**Objective:** Implement a simple system combining limited free tries with session-based BYOK (Bring Your Own Key).
+**Objective:** Implement a basic credits system to limit free meditation generations.
 
 **Tasks:**
 
-1. **Database Updates:**
-    - Add new column to profiles table:
-        - `meditationCredits` (integer, default: 3)
+1. **Database Requirements:** ✅
+    - Store meditation credits per user (default: 3 free credits) ✅
+    - Track total meditations generated ✅
+    - Ensure atomic credit operations to prevent race conditions ✅
 
-2. **Session-Based API Key Management:**
-    - Add API key input field in meditation interface
-    - Store API key in session memory only
-    - Clear API key on session end/page refresh
-    - Validate API key before each meditation generation
+2. **Credit Management Logic:** ✅
+    - Added credit management actions:
+        - `checkCreditsAction`: Check if user has available credits
+        - `deductCreditAction`: Atomically deduct a credit and increment total meditations
+        - `addCreditsAction`: Add credits to a user's account
+    - Validate credit availability before generation starts ✅
+    - Only deduct credits after successful meditation generation ✅
+    - Atomic operations with rollback on insufficient credits ✅
 
-3. **Credits System:**
-    - Track meditation generation attempts
-    - Implement credit deduction logic
-    - Display remaining credits in UI
-    - Show API key input when credits expire
+3. **User Experience Requirements:** ✅
+    - Show remaining credits prominently in the UI ✅
+    - Show credit history in user dashboard ✅
+    - Display warning when credits are low (1 remaining) ✅
 
-4. **User Experience:**
-    - Show remaining credits prominently
-    - Clear instructions for API key input
-    - Graceful handling of:
-        - Credit expiration
-        - Invalid API keys
-        - Session expiration
+**Verification Criteria:** ✅
 
-**Verification:**
+- Credits accurately track across multiple sessions ✅
+- Credit deduction only occurs after successful generation ✅
+- Users cannot generate meditations without credits ✅
+- Credit display updates in real-time ✅
+- Atomic operations prevent race conditions ✅
+- Low credit warnings display correctly ✅
 
-- New users get 3 free meditation credits
-- Credits deduct correctly per meditation
-- Users can input their OpenAI API key for the session
-- API key is never stored in database
-- Credits can be manually adjusted in Supabase if needed
-- UX is clear and intuitive
+### Phase 9B: Session-Based BYOK (Bring Your Own Key)
+
+**Objective:** Implement a secure, session-based system for users to use their own OpenAI API keys after depleting free credits.
+
+**Tasks:**
+
+1. **Security Requirements:**
+    - Never store API keys in database
+    - Clear keys from memory on session end
+    - Implement automatic key expiry after 30 minutes
+    - Sanitize all key-related logs
+    - Prevent key exposure in error messages
+
+2. **Validation Requirements:**
+    - Verify API key format before acceptance
+    - Test key permissions against OpenAI API
+    - Rate limit validation attempts
+    - Check for key expiration
+    - Validate key billing status
+
+3. **Session Management:**
+    - Store keys only in session memory
+    - Clear keys on browser close/refresh
+    - Implement session timeout
+    - Handle multiple tab scenarios
+    - Support seamless key updates
+
+4. **Integration Requirements:**
+    - Smooth transition from credits to API key
+    - Clear instructions for obtaining API key
+    - Graceful fallback if key becomes invalid
+    - Support for key rotation
+    - Handle API quota limits
+
+**Verification Criteria:**
+
+- API keys never persist beyond session
+- Invalid keys are rejected with helpful messages
+- Keys are securely cleared on session end
+- System handles key validation failures gracefully
+- Users understand when and how to use their key
+- Smooth transition between credits and BYOK
+- No security vulnerabilities in key handling

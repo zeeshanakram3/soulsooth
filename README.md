@@ -202,3 +202,5 @@ Key learnings from implementing the meditation app:
    - Limit file sizes and types
    - Implement rate limiting for API routes
    - Regular security audits
+
+ 
