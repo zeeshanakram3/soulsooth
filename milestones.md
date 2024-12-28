@@ -367,3 +367,42 @@ The app will allow users to input their current emotional state. It will then us
 - Real-time updates from backend
 - No quality loss
 - Stable across durations
+
+### Phase 9: Session-Based BYOK with Free Credits
+
+**Objective:** Implement a simple system combining limited free tries with session-based BYOK (Bring Your Own Key).
+
+**Tasks:**
+
+1. **Database Updates:**
+    - Add new column to profiles table:
+        - `meditationCredits` (integer, default: 3)
+
+2. **Session-Based API Key Management:**
+    - Add API key input field in meditation interface
+    - Store API key in session memory only
+    - Clear API key on session end/page refresh
+    - Validate API key before each meditation generation
+
+3. **Credits System:**
+    - Track meditation generation attempts
+    - Implement credit deduction logic
+    - Display remaining credits in UI
+    - Show API key input when credits expire
+
+4. **User Experience:**
+    - Show remaining credits prominently
+    - Clear instructions for API key input
+    - Graceful handling of:
+        - Credit expiration
+        - Invalid API keys
+        - Session expiration
+
+**Verification:**
+
+- New users get 3 free meditation credits
+- Credits deduct correctly per meditation
+- Users can input their OpenAI API key for the session
+- API key is never stored in database
+- Credits can be manually adjusted in Supabase if needed
+- UX is clear and intuitive
