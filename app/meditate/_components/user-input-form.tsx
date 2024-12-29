@@ -190,37 +190,6 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
     }
   }
 
-  // Handle layout animation when meditation appears
-  useEffect(() => {
-    if (meditation) {
-      // Get elements
-      const container = document.getElementById("meditation-container")
-      const inputContainer = document.getElementById("input-container")
-
-      // Show meditation container
-      if (container) {
-        container.style.display = "block"
-        // Trigger reflow
-        void container.offsetHeight
-        container.style.opacity = "1"
-      }
-
-      // Animate input to the left
-      if (inputContainer) {
-        inputContainer.classList.add("lg:translate-x-0")
-        inputContainer.classList.remove("lg:translate-x-1/4")
-      }
-    }
-  }, [meditation])
-
-  // Initialize centered position
-  useEffect(() => {
-    const inputContainer = document.getElementById("input-container")
-    if (inputContainer && !meditation) {
-      inputContainer.classList.add("lg:translate-x-1/4")
-    }
-  }, [])
-
   // Render meditation in the right column
   const renderMeditation = () => {
     const container = document.getElementById("meditation-container")
@@ -292,6 +261,14 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
       container
     )
   }
+
+  // Show meditation container when meditation exists
+  useEffect(() => {
+    const container = document.getElementById("meditation-container")
+    if (container) {
+      container.style.display = meditation ? "block" : "none"
+    }
+  }, [meditation])
 
   return (
     <div className="space-y-4">

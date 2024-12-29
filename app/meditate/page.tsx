@@ -14,13 +14,10 @@ export default async function MeditatePage() {
 
   return (
     <div className="container mx-auto h-[calc(100vh-4rem)] px-4 py-8">
-      <div
-        className="grid h-full grid-cols-1 gap-8 lg:grid-cols-[1fr,600px]"
-        id="layout-container"
-      >
-        {/* Input Column - Centered by default, animates left when meditation appears */}
+      <div className="grid h-full grid-cols-1 gap-8 lg:grid-cols-[1fr,600px]">
+        {/* Left Column */}
         <div
-          className="mx-auto w-full max-w-2xl transition-all duration-700 lg:max-w-none"
+          className="mx-auto w-full max-w-2xl lg:max-w-none"
           id="input-container"
         >
           <div className="mb-6">
@@ -37,11 +34,8 @@ export default async function MeditatePage() {
           </div>
         </div>
 
-        {/* Meditation Display Column - Hidden initially */}
-        <div
-          id="meditation-container"
-          className="hidden h-full opacity-0 transition-all duration-700 lg:block"
-        />
+        {/* Right Column */}
+        <div id="meditation-container" className="hidden h-full lg:block" />
       </div>
     </div>
   )
