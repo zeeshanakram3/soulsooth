@@ -49,21 +49,25 @@ export default function CreditsDisplay({
 
       {showWarning && credits === 1 && (
         <Alert className="py-2">
-          <AlertCircle className="size-4" />
-          <AlertDescription>
-            You have 1 credit remaining. You can use your own API key for
-            unlimited meditations.
-          </AlertDescription>
+          <div className="flex items-center gap-2">
+            <AlertCircle className="size-4" />
+            <AlertDescription>
+              You have 1 credit remaining. You can use your own API key for
+              unlimited meditations.
+            </AlertDescription>
+          </div>
         </Alert>
       )}
 
       {showWarning && credits === 0 && (
         <Alert variant="destructive" className="py-2">
-          <AlertCircle className="size-4" />
-          <AlertDescription>
-            You have no credits remaining. Use your own API key for unlimited
-            meditations.
-          </AlertDescription>
+          <div className="flex items-center gap-2">
+            <AlertCircle className="size-4" />
+            <AlertDescription>
+              You have no credits remaining. Use your own API key for unlimited
+              meditations.
+            </AlertDescription>
+          </div>
         </Alert>
       )}
     </div>
