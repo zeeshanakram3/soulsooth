@@ -9,8 +9,10 @@ export async function setApiKeyAction(
   apiKey: string | null
 ): Promise<ActionState<void>> {
   try {
+    const cookieStore = cookies()
+
     if (!apiKey) {
-      cookies().delete(API_KEY_COOKIE)
+      cookieStore.delete(API_KEY_COOKIE)
       return {
         isSuccess: true,
         message: "API key removed successfully",
@@ -25,12 +27,7 @@ export async function setApiKeyAction(
       }
     }
 
-    cookies().set(API_KEY_COOKIE, apiKey, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      path: "/"
-    })
+    cookieStore.set(API_KEY_COOKIE, apiKey)
 
     return {
       isSuccess: true,
@@ -48,7 +45,8 @@ export async function setApiKeyAction(
 
 export async function getApiKeyAction(): Promise<ActionState<string | null>> {
   try {
-    const apiKey = cookies().get(API_KEY_COOKIE)?.value
+    const cookieStore = cookies()
+    const apiKey = cookieStore.get(API_KEY_COOKIE)?.value
 
     return {
       isSuccess: true,

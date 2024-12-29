@@ -42,6 +42,7 @@ export async function POST(req: Request) {
 
   // Process in background
   const process = async () => {
+    let writer: WritableStreamDefaultWriter<Uint8Array> | null = null
     try {
       // Auth check
       const session = await auth()
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
       }
 
       // Check for personal API key
-      const cookieStore = cookies() as unknown as RequestCookies
+      const cookieStore = await cookies()
       const personalApiKey = cookieStore.get("openai-api-key")?.value
       const openai = personalApiKey
         ? new OpenAI({ apiKey: personalApiKey })
@@ -335,10 +336,6 @@ export async function POST(req: Request) {
         type: "complete",
         meditation: result.data
       })
-
-      // Close the stream
-      const writer = stream.writable.getWriter()
-      await writer.close()
     } catch (error) {
       console.error("Error:", error)
       sendUpdate(stream.writable, {
@@ -347,8 +344,12 @@ export async function POST(req: Request) {
           error instanceof Error ? error.message : "Unknown error occurred"
       })
     } finally {
-      const writer = stream.writable.getWriter()
-      await writer.close()
+      try {
+        writer = stream.writable.getWriter()
+        await writer.close()
+      } catch (e) {
+        console.error("Error closing stream:", e)
+      }
     }
   }
 
