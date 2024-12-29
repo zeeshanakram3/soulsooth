@@ -1,9 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { checkCreditsAction } from "@/actions/db/profiles-actions"
-import { AlertCircle } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { AlertCircle, Coins } from "lucide-react"
+import { checkCreditsAction } from "@/actions/db/profiles-actions"
 
 interface CreditsDisplayProps {
   userId: string
@@ -32,29 +32,23 @@ export default function CreditsDisplay({
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between rounded-lg border p-4">
-        <div className="space-y-0.5">
-          <h3 className="text-sm font-medium tracking-tight">
-            Meditation Credits
-          </h3>
-          <p className="text-muted-foreground text-sm">
-            {credits === 0
-              ? "No credits remaining"
-              : `${credits} credit${credits === 1 ? "" : "s"} remaining`}
-          </p>
+    <div className="space-y-2">
+      <div className="flex items-center gap-4">
+        <div className="flex flex-1 items-center gap-2">
+          <Coins className="text-muted-foreground size-4" />
+          <span className="text-sm font-medium">Meditation Credits</span>
         </div>
-        <div
-          className={`text-2xl font-bold ${
-            credits === 0 ? "text-destructive" : "text-primary"
-          }`}
-        >
-          {credits}
+        <div className={credits === 0 ? "text-destructive" : "text-primary"}>
+          <span className="text-sm font-medium">
+            {credits === 0
+              ? "No credits"
+              : `${credits} credit${credits === 1 ? "" : "s"}`}
+          </span>
         </div>
       </div>
 
       {showWarning && credits === 1 && (
-        <Alert>
+        <Alert className="py-2">
           <AlertCircle className="size-4" />
           <AlertDescription>
             You have 1 credit remaining. Consider upgrading to Pro for unlimited
@@ -64,7 +58,7 @@ export default function CreditsDisplay({
       )}
 
       {showWarning && credits === 0 && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="py-2">
           <AlertCircle className="size-4" />
           <AlertDescription>
             You have no credits remaining. Upgrade to Pro for unlimited

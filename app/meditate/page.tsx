@@ -13,18 +13,36 @@ export default async function MeditatePage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-8">
-        <CreditsDisplay userId={userId} />
+    <div className="container mx-auto h-[calc(100vh-4rem)] px-4 py-8">
+      <div
+        className="grid h-full grid-cols-1 gap-8 lg:grid-cols-[1fr,600px]"
+        id="layout-container"
+      >
+        {/* Input Column - Centered by default, animates left when meditation appears */}
+        <div
+          className="mx-auto w-full max-w-2xl transition-all duration-700 lg:max-w-none"
+          id="input-container"
+        >
+          <div className="mb-6">
+            <h1 className="mb-4 text-3xl font-bold">Generate a Meditation</h1>
+            <p className="text-muted-foreground">
+              Tell us how you're feeling and we'll generate a personalized
+              meditation just for you.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <CreditsDisplay userId={userId} />
+            <UserInputForm userId={userId} />
+          </div>
+        </div>
+
+        {/* Meditation Display Column - Hidden initially */}
+        <div
+          id="meditation-container"
+          className="hidden h-full opacity-0 transition-all duration-700 lg:block"
+        />
       </div>
-
-      <h1 className="mb-8 text-4xl font-bold">Generate a Meditation</h1>
-      <p className="text-muted-foreground mb-8 text-lg">
-        Tell us how you're feeling and we'll generate a personalized meditation
-        just for you.
-      </p>
-
-      <UserInputForm userId={userId} />
     </div>
   )
 }

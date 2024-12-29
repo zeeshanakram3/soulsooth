@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { AlertCircle } from "lucide-react"
+import { AlertCircle, Key } from "lucide-react"
 
 interface ApiKeyInputProps {
   onApiKeyChange: (key: string | null) => void
@@ -38,11 +38,14 @@ export function ApiKeyInput({ onApiKeyChange }: ApiKeyInputProps) {
   }
 
   return (
-    <div className="space-y-4 rounded-lg border p-4">
-      <div className="flex items-center justify-between">
-        <Label htmlFor="use-api-key" className="text-sm font-medium">
-          Use Personal OpenAI API Key
-        </Label>
+    <div className="space-y-2">
+      <div className="flex items-center gap-4">
+        <div className="flex flex-1 items-center gap-2">
+          <Key className="text-muted-foreground size-4" />
+          <Label htmlFor="use-api-key" className="text-sm font-medium">
+            Use Personal OpenAI API Key
+          </Label>
+        </div>
         <Switch
           id="use-api-key"
           checked={useApiKey}
@@ -52,7 +55,6 @@ export function ApiKeyInput({ onApiKeyChange }: ApiKeyInputProps) {
 
       {useApiKey && (
         <div className="space-y-2">
-          <Label htmlFor="api-key">OpenAI API Key</Label>
           <Input
             id="api-key"
             type="password"
@@ -62,7 +64,7 @@ export function ApiKeyInput({ onApiKeyChange }: ApiKeyInputProps) {
             className="font-mono"
           />
           {error && (
-            <Alert variant="destructive">
+            <Alert variant="destructive" className="py-2">
               <AlertCircle className="size-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>

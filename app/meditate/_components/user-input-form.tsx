@@ -17,6 +17,7 @@ import {
 import { toast } from "sonner"
 import { ApiKeyInput } from "./api-key-input"
 import { setApiKeyAction } from "@/actions/api-key-actions"
+import { createPortal } from "react-dom"
 
 type GenerationStep =
   | "idle"
@@ -189,8 +190,111 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
     }
   }
 
+  // Handle layout animation when meditation appears
+  useEffect(() => {
+    if (meditation) {
+      // Get elements
+      const container = document.getElementById("meditation-container")
+      const inputContainer = document.getElementById("input-container")
+
+      // Show meditation container
+      if (container) {
+        container.style.display = "block"
+        // Trigger reflow
+        void container.offsetHeight
+        container.style.opacity = "1"
+      }
+
+      // Animate input to the left
+      if (inputContainer) {
+        inputContainer.classList.add("lg:translate-x-0")
+        inputContainer.classList.remove("lg:translate-x-1/4")
+      }
+    }
+  }, [meditation])
+
+  // Initialize centered position
+  useEffect(() => {
+    const inputContainer = document.getElementById("input-container")
+    if (inputContainer && !meditation) {
+      inputContainer.classList.add("lg:translate-x-1/4")
+    }
+  }, [])
+
+  // Render meditation in the right column
+  const renderMeditation = () => {
+    const container = document.getElementById("meditation-container")
+    if (!container || !meditation) return null
+
+    return createPortal(
+      <div className="animate-in fade-in slide-in-from-right-8 duration-500">
+        <div className="sticky top-0 z-10 mb-4 flex items-center justify-between rounded-lg border bg-white/80 p-4 backdrop-blur">
+          <h3 className="text-xl font-semibold">
+            {meditation.meditationScript.title}
+          </h3>
+          <span className="text-muted-foreground text-sm">
+            {duration} minute meditation
+          </span>
+        </div>
+
+        <div className="h-[calc(100vh-16rem)] overflow-y-auto rounded-lg border bg-white p-6">
+          {generationStep === "complete" ? (
+            <MeditationPlayer meditation={meditation} />
+          ) : (
+            <div
+              className={`space-y-4 transition-opacity duration-500 ${
+                generationStep === "generating-script"
+                  ? "opacity-0"
+                  : "opacity-100"
+              }`}
+            >
+              {meditation.meditationScript.segments.map((segment, index) => (
+                <div
+                  key={index}
+                  className="animate-in fade-in slide-in-from-bottom-4 rounded-lg border p-4 transition-all duration-300 hover:border-blue-500/20 hover:bg-blue-500/5"
+                  style={{ animationDelay: `${index * 150}ms` }}
+                >
+                  {segment.type === "speech" ? (
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-blue-50">
+                        <Volume2 className="size-4 text-blue-500" />
+                      </div>
+                      <p className="text-gray-600">{segment.content}</p>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-emerald-50">
+                        <span className="size-2 animate-pulse rounded-full bg-current text-emerald-500" />
+                      </div>
+                      <p className="text-gray-600">
+                        {segment.duration} second pause - Take a deep breath
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {generationStep !== "complete" && meditation.audioFilePath && (
+            <div className="bg-muted/50 mt-6 flex items-center gap-4 rounded-lg border px-6 py-4">
+              <Loader2 className="size-4 animate-spin" />
+              <span className="text-muted-foreground text-sm">
+                {generationStep === "generating-speech" &&
+                  "Converting meditation script to soothing voice..."}
+                {generationStep === "adding-music" &&
+                  "Adding soothing background music..."}
+              </span>
+            </div>
+          )}
+        </div>
+      </div>,
+      container
+    )
+  }
+
   return (
-    <div className="grid gap-8">
+    <div className="space-y-4">
       <Card className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <ApiKeyInput onApiKeyChange={handleApiKeyChange} />
@@ -282,70 +386,8 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
         </form>
       </Card>
 
-      {meditation && (
-        <Card className="overflow-hidden">
-          <div className="p-6">
-            <div className="mb-6 flex items-center justify-between">
-              <h3 className="text-xl font-semibold">
-                {meditation.meditationScript.title}
-              </h3>
-              <span className="text-muted-foreground text-sm">
-                {duration} minute meditation
-              </span>
-            </div>
-
-            {generationStep === "complete" ? (
-              <MeditationPlayer meditation={meditation} />
-            ) : (
-              <div
-                className={`space-y-4 transition-opacity duration-500 ${
-                  generationStep === "generating-script"
-                    ? "opacity-0"
-                    : "opacity-100"
-                }`}
-              >
-                <div className="space-y-4">
-                  {meditation.meditationScript.segments.map(
-                    (segment, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg border p-4 transition-all duration-300 hover:border-blue-500/20 hover:bg-blue-500/5"
-                      >
-                        {segment.type === "speech" ? (
-                          <div className="flex items-center gap-2">
-                            <span className="text-blue-600">🗣️</span>
-                            <p className="text-gray-600">{segment.content}</p>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <span className="text-emerald-600">⏸️</span>
-                            <p className="text-gray-600">
-                              {segment.duration} second pause - Take a deep
-                              breath
-                            </p>
-                          </div>
-                        )}
-                      </div>
-                    )
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {generationStep !== "complete" && meditation.audioFilePath && (
-            <div className="bg-muted/50 flex items-center gap-4 border-t px-6 py-4">
-              <Loader2 className="size-4 animate-spin" />
-              <span className="text-muted-foreground text-sm">
-                {generationStep === "generating-speech" &&
-                  "Converting meditation script to soothing voice..."}
-                {generationStep === "adding-music" &&
-                  "Adding soothing background music..."}
-              </span>
-            </div>
-          )}
-        </Card>
-      )}
+      {/* Render meditation in right column */}
+      {meditation && renderMeditation()}
     </div>
   )
 }
