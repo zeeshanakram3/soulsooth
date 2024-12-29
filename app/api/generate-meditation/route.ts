@@ -113,16 +113,20 @@ export async function POST(req: Request) {
       Rules:
       - Generate a ${validatedDuration}-minute meditation (${targetWordCount} total words)
       - EXACTLY 50% of the time (${silenceSeconds} seconds) must be silence, distributed across pause segments
-      - Before each pause, end the speech segment with "Now, let's take a [X] second pause to [purpose]"
       - Structure segments in this pattern:
-        1. Welcome and initial guidance
-        2. [Announce pause duration] + Pause
-        3. Deeper meditation instruction
-        4. [Announce pause duration] + Pause
-        5. Final guidance and positive reinforcement
+        1. Welcome and initial guidance (speech)
+        2. Pause for reflection
+        3. Deeper meditation instruction (speech)
+        4. Pause for practice
+        5. Final guidance and positive reinforcement (speech)
       - Each minute of speech should have roughly 150 words
       - Speech segments should be calming and focused on breathing and mindfulness
+      - Before each pause, naturally transition with phrases like:
+        * "Now, let's take a moment to practice this..."
+        * "We'll pause now to let these feelings settle..."
+        * "Let's take some time to experience this fully..."
       - Address their specific situation in the content
+      - IMPORTANT: The meditation MUST end with a speech segment, not a pause
       - End with a gentle positive reinforcement that makes the user feel accomplished
       - Return ONLY valid JSON, no other text`
 
@@ -152,6 +156,32 @@ export async function POST(req: Request) {
       if (!parsedScript.title || !Array.isArray(parsedScript.segments)) {
         throw new Error("Invalid script format")
       }
+
+      // Post-process durations to match target duration
+      const totalDurationSeconds = validatedDuration * 60
+      let totalSpeechDuration = 0
+
+      // Calculate total speech duration
+      parsedScript.segments.forEach(segment => {
+        if (segment.type === "speech") {
+          totalSpeechDuration += segment.duration
+        }
+      })
+
+      // Calculate remaining time for pauses
+      const remainingTime = totalDurationSeconds - totalSpeechDuration
+      const pauseCount = parsedScript.segments.filter(
+        segment => segment.type === "pause"
+      ).length
+      const adjustedPauseDuration = remainingTime / pauseCount
+
+      // Update pause durations
+      parsedScript.segments = parsedScript.segments.map(segment => {
+        if (segment.type === "pause") {
+          return { ...segment, duration: adjustedPauseDuration }
+        }
+        return segment
+      })
 
       // Send script to frontend immediately
       sendUpdate(stream.writable, {
