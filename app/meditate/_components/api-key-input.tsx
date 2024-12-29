@@ -55,6 +55,17 @@ export function ApiKeyInput({ onApiKeyChange }: ApiKeyInputProps) {
 
       {useApiKey && (
         <div className="space-y-2">
+          <div className="text-muted-foreground text-sm">
+            Get API key from{" "}
+            <a
+              href="https://platform.openai.com/api-keys"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              platform.openai.com/api-keys
+            </a>
+          </div>
           <Input
             id="api-key"
             type="password"
