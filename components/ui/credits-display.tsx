@@ -51,8 +51,8 @@ export default function CreditsDisplay({
         <Alert className="py-2">
           <AlertCircle className="size-4" />
           <AlertDescription>
-            You have 1 credit remaining. Consider upgrading to Pro for unlimited
-            meditations.
+            You have 1 credit remaining. You can use your own API key for
+            unlimited meditations.
           </AlertDescription>
         </Alert>
       )}
@@ -61,7 +61,7 @@ export default function CreditsDisplay({
         <Alert variant="destructive" className="py-2">
           <AlertCircle className="size-4" />
           <AlertDescription>
-            You have no credits remaining. Upgrade to Pro for unlimited
+            You have no credits remaining. Use your own API key for unlimited
             meditations.
           </AlertDescription>
         </Alert>
