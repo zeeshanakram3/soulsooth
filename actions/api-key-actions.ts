@@ -9,7 +9,7 @@ export async function setApiKeyAction(
   apiKey: string | null
 ): Promise<ActionState<void>> {
   try {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
 
     if (!apiKey) {
       cookieStore.delete(API_KEY_COOKIE)
@@ -45,7 +45,7 @@ export async function setApiKeyAction(
 
 export async function getApiKeyAction(): Promise<ActionState<string | null>> {
   try {
-    const cookieStore = cookies()
+    const cookieStore = await cookies()
     const apiKey = cookieStore.get(API_KEY_COOKIE)?.value
 
     return {
