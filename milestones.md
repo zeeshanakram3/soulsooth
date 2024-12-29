@@ -402,34 +402,45 @@ The app will allow users to input their current emotional state. It will then us
 - Atomic operations prevent race conditions ✅
 - Low credit warnings display correctly ✅
 
-### Phase 9B.1: Basic BYOK Implementation
+### Phase 9B.1: Basic BYOK Implementation ✅
 
 **Objective:** Implement basic "Bring Your Own Key" functionality with session-based storage.
 
 **Tasks:**
 
-1. **Basic API Key Management:**
-    - Add API key input component to meditation page
-    - Implement basic key validation (format check)
-    - Store key in HTTP-only cookie with secure settings
-    - Clear key on session end
+1. **Basic API Key Management:** ✅
+    - Added API key input component to meditation page ✅
+    - Implemented basic key validation (format check) ✅
+    - Store key in HTTP-only cookie with secure settings ✅
+    - Clear key on toggle off ✅
 
-2. **Simple Toggle System:**
-    - Add toggle between credits and API key mode
-    - Show/hide API key input based on mode
-    - Display current active mode
+2. **Simple Toggle System:** ✅
+    - Added toggle between credits and API key mode ✅
+    - Show/hide API key input based on mode ✅
+    - Display current active mode ✅
+    - Smooth transitions between modes ✅
 
-3. **Basic Error Handling:**
-    - Validate API key format (starts with "sk-")
-    - Show user-friendly error messages
-    - Basic error logging (without exposing keys)
+3. **Basic Error Handling:** ✅
+    - Validate API key format (starts with "sk-") ✅
+    - Show user-friendly error messages ✅
+    - Basic error logging (without exposing keys) ✅
+    - Secure storage in HTTP-only cookies ✅
 
-**Verification:**
-- Users can input their API key
-- Basic validation works
-- Keys are stored securely in cookies
-- Simple mode switching works
-- Basic error messages display correctly
+**Implementation Details:**
+- Created `ApiKeyInput` component with toggle and secure input
+- Added server actions for cookie management
+- Updated meditation generation to use personal API key when available
+- Skip credit deduction when using personal API key
+- Added error handling and validation
+- Implemented secure cookie storage with proper settings
+
+**Verification:** ✅
+- Users can input their API key ✅
+- Basic validation works ✅
+- Keys are stored securely in cookies ✅
+- Simple mode switching works ✅
+- Basic error messages display correctly ✅
+- Credit system properly integrates with BYOK ✅
 
 ### Phase 9B.2: Advanced BYOK Integration
 
