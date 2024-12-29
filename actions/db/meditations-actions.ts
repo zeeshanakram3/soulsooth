@@ -1,7 +1,7 @@
 "use server"
 
 import { db } from "@/db/db"
-import { InsertMeditation, SelectMeditation, meditationsTable } from "@/db/schema"
+import { InsertMeditation, MeditationScript, SelectMeditation, meditationsTable } from "@/db/schema"
 import { ActionState } from "@/types/server-action-types"
 import { desc, eq, sql } from "drizzle-orm"
 
@@ -55,7 +55,7 @@ export async function getMeditationsByUserIdAction(
   userId: string,
   page: number = 1,
   limit: number = 10
-): Promise<ActionState<{ meditations: SelectMeditation[]; total: number }>> {
+): Promise<ActionState<{ meditations: (SelectMeditation & { meditationScript: MeditationScript })[]; total: number }>> {
   try {
     const offset = (page - 1) * limit
 
@@ -71,11 +71,17 @@ export async function getMeditationsByUserIdAction(
       .from(meditationsTable)
       .where(eq(meditationsTable.userId, userId))
 
+    // Cast the meditationScript to MeditationScript type
+    const typedMeditations = meditations.map(meditation => ({
+      ...meditation,
+      meditationScript: meditation.meditationScript as MeditationScript
+    }))
+
     return {
       isSuccess: true,
       message: "Meditations retrieved successfully",
       data: {
-        meditations,
+        meditations: typedMeditations,
         total: Number(count)
       }
     }
