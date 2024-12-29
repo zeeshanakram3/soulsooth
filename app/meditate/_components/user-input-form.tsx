@@ -15,6 +15,8 @@ import {
   deductCreditAction
 } from "@/actions/db/profiles-actions"
 import { toast } from "sonner"
+import { ApiKeyInput } from "./api-key-input"
+import { setApiKeyAction } from "@/actions/api-key-actions"
 
 type GenerationStep =
   | "idle"
@@ -41,6 +43,7 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
     meditationScript: MeditationScript
     audioFilePath?: string | null
   } | null>(null)
+  const [apiKey, setApiKey] = useState<string | null>(null)
 
   const isLoading = generationStep !== "idle" && generationStep !== "complete"
 
@@ -90,16 +93,26 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
     return () => clearInterval(interval)
   }, [generationStep, progress, targetProgress])
 
+  const handleApiKeyChange = async (key: string | null) => {
+    setApiKey(key)
+    const result = await setApiKeyAction(key)
+    if (!result.isSuccess) {
+      toast.error(result.message)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!input.trim()) return
 
     try {
-      // Check credits first
-      const creditsResult = await checkCreditsAction(userId)
-      if (!creditsResult.isSuccess || !creditsResult.data.hasCredits) {
-        toast.error("You don't have enough credits to generate a meditation")
-        return
+      // Only check credits if not using personal API key
+      if (!apiKey) {
+        const creditsResult = await checkCreditsAction(userId)
+        if (!creditsResult.isSuccess || !creditsResult.data.hasCredits) {
+          toast.error("You don't have enough credits to generate a meditation")
+          return
+        }
       }
 
       // Reset state
@@ -155,10 +168,12 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
               setTargetProgress(100)
               setMeditation(data.meditation)
 
-              // Deduct credit after successful generation
-              const deductResult = await deductCreditAction(userId)
-              if (!deductResult.isSuccess) {
-                toast.error("Failed to deduct credit")
+              // Only deduct credit if not using personal API key
+              if (!apiKey) {
+                const deductResult = await deductCreditAction(userId)
+                if (!deductResult.isSuccess) {
+                  toast.error("Failed to deduct credit")
+                }
               }
               break
             }
@@ -178,6 +193,8 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
     <div className="grid gap-8">
       <Card className="p-6">
         <form onSubmit={handleSubmit} className="space-y-4">
+          <ApiKeyInput onApiKeyChange={handleApiKeyChange} />
+
           <Textarea
             value={input}
             onChange={e => setInput(e.target.value)}

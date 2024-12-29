@@ -6,10 +6,13 @@ import fs from "fs"
 import path from "path"
 import { exec } from "child_process"
 import { promisify } from "util"
+import { cookies } from "next/headers"
+import { RequestCookies } from "next/dist/server/web/spec-extension/cookies"
 
 const execAsync = promisify(exec)
 
-const openai = new OpenAI({
+// Create OpenAI client with default API key
+const defaultOpenai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 })
 
@@ -47,6 +50,13 @@ export async function POST(req: Request) {
       if (!userId) {
         throw new Error("Unauthorized")
       }
+
+      // Check for personal API key
+      const cookieStore = cookies() as unknown as RequestCookies
+      const personalApiKey = cookieStore.get("openai-api-key")?.value
+      const openai = personalApiKey
+        ? new OpenAI({ apiKey: personalApiKey })
+        : defaultOpenai
 
       // Input validation and preparation
       const {
@@ -330,16 +340,14 @@ export async function POST(req: Request) {
       const writer = stream.writable.getWriter()
       await writer.close()
     } catch (error) {
-      console.error("Error generating meditation:", error)
+      console.error("Error:", error)
+      sendUpdate(stream.writable, {
+        type: "error",
+        message:
+          error instanceof Error ? error.message : "Unknown error occurred"
+      })
+    } finally {
       const writer = stream.writable.getWriter()
-      writer.write(
-        new TextEncoder().encode(
-          JSON.stringify({
-            type: "error",
-            message: error instanceof Error ? error.message : "Unknown error"
-          }) + "\n"
-        )
-      )
       await writer.close()
     }
   }

@@ -402,46 +402,72 @@ The app will allow users to input their current emotional state. It will then us
 - Atomic operations prevent race conditions ✅
 - Low credit warnings display correctly ✅
 
-### Phase 9B: Session-Based BYOK (Bring Your Own Key)
+### Phase 9B.1: Basic BYOK Implementation
 
-**Objective:** Implement a secure, session-based system for users to use their own OpenAI API keys after depleting free credits.
+**Objective:** Implement basic "Bring Your Own Key" functionality with session-based storage.
 
 **Tasks:**
 
-1. **Security Requirements:**
-    - Never store API keys in database
-    - Clear keys from memory on session end
-    - Implement automatic key expiry after 30 minutes
-    - Sanitize all key-related logs
-    - Prevent key exposure in error messages
+1. **Basic API Key Management:**
+    - Add API key input component to meditation page
+    - Implement basic key validation (format check)
+    - Store key in HTTP-only cookie with secure settings
+    - Clear key on session end
 
-2. **Validation Requirements:**
-    - Verify API key format before acceptance
-    - Test key permissions against OpenAI API
-    - Rate limit validation attempts
-    - Check for key expiration
-    - Validate key billing status
+2. **Simple Toggle System:**
+    - Add toggle between credits and API key mode
+    - Show/hide API key input based on mode
+    - Display current active mode
 
-3. **Session Management:**
-    - Store keys only in session memory
-    - Clear keys on browser close/refresh
-    - Implement session timeout
-    - Handle multiple tab scenarios
-    - Support seamless key updates
+3. **Basic Error Handling:**
+    - Validate API key format (starts with "sk-")
+    - Show user-friendly error messages
+    - Basic error logging (without exposing keys)
 
-4. **Integration Requirements:**
-    - Smooth transition from credits to API key
-    - Clear instructions for obtaining API key
-    - Graceful fallback if key becomes invalid
-    - Support for key rotation
-    - Handle API quota limits
+**Verification:**
+- Users can input their API key
+- Basic validation works
+- Keys are stored securely in cookies
+- Simple mode switching works
+- Basic error messages display correctly
 
-**Verification Criteria:**
+### Phase 9B.2: Advanced BYOK Integration
 
-- API keys never persist beyond session
-- Invalid keys are rejected with helpful messages
-- Keys are securely cleared on session end
-- System handles key validation failures gracefully
-- Users understand when and how to use their key
-- Smooth transition between credits and BYOK
-- No security vulnerabilities in key handling
+**Objective:** Enhance BYOK system with full credit integration and robust error handling.
+
+**Tasks:**
+
+1. **Advanced API Key Management:**
+    - Implement proper key rotation
+    - Add key validation against OpenAI API
+    - Handle key expiration gracefully
+    - Implement secure key cleanup
+
+2. **Full Credit System Integration:**
+    - Integrate with existing credit system
+    - Skip credit checks for personal API keys
+    - Prevent double credit deductions
+    - Handle fallback to credit system
+
+3. **Enhanced Error Handling:**
+    - Handle all OpenAI API errors:
+        - Invalid keys
+        - Expired keys
+        - Quota exceeded
+        - Rate limits
+    - Implement proper error recovery
+    - Add detailed error logging
+    - Provide specific user guidance
+
+4. **State Management:**
+    - Implement robust state tracking
+    - Handle race conditions
+    - Manage transitions between modes
+    - Persist state appropriately
+
+**Verification:**
+- Full credit system integration works
+- All error cases handled properly
+- Smooth transitions between modes
+- No security vulnerabilities
+- Complete user feedback system
