@@ -20,6 +20,7 @@ import {
 import Image from "next/image"
 import Link from "next/link"
 import { VideoPlayer } from "@/components/ui/video-player"
+import { RevealAnimation } from "@/components/ui/reveal-animation"
 
 const testimonials = [
   {
@@ -66,7 +67,8 @@ const howItWorks = [
   },
   {
     title: "Start Meditating",
-    description: "Follow along with your custom meditation session",
+    description:
+      "Follow along with your custom meditation session and let the calming guidance lead you",
     icon: Play,
     color: "bg-green-500/10 text-green-500",
     gradient: "hover:border-green-500/50 hover:bg-green-50/50"
@@ -242,15 +244,17 @@ export default async function LandingPage() {
         </section>
 
         {/* How It Works Section */}
-        <section className="py-8">
-          <div className="text-center">
-            <h2 className="mb-2 text-3xl font-bold sm:text-4xl">
-              How It Works
-            </h2>
-            <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-              Get started with MeditateGPT in three simple steps
-            </p>
-          </div>
+        <section className="py-12">
+          <RevealAnimation>
+            <div className="text-center">
+              <h2 className="mb-2 text-3xl font-bold sm:text-4xl">
+                How It Works
+              </h2>
+              <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
+                Get started with MeditateGPT in three simple steps
+              </p>
+            </div>
+          </RevealAnimation>
 
           <div className="relative">
             {/* Connection Lines */}
@@ -265,44 +269,45 @@ export default async function LandingPage() {
               {howItWorks.map((step, index) => {
                 const Icon = step.icon
                 return (
-                  <div
-                    key={index}
-                    className={`group relative rounded-xl border bg-white p-6 shadow-sm transition-all duration-300 ${step.gradient}`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <div
-                        className={`flex size-14 items-center justify-center rounded-xl ${step.color}`}
-                      >
-                        <Icon className="size-7" />
-                      </div>
-                      <div className="flex size-7 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600">
-                        {index + 1}
-                      </div>
-                    </div>
-
-                    <div className="mt-4">
-                      <h3 className="mb-2 text-xl font-semibold">
-                        {step.title}
-                      </h3>
-                      <p className="text-muted-foreground">
-                        {step.description}
-                      </p>
-                    </div>
-
-                    {/* Mobile-only divider */}
-                    {index < howItWorks.length - 1 && (
-                      <div className="my-6 block border-b lg:hidden" />
-                    )}
-
-                    {/* Desktop arrow */}
-                    {index < howItWorks.length - 1 && (
-                      <div className="absolute -right-3 top-1/2 hidden -translate-y-1/2 lg:block">
-                        <div className="flex size-6 items-center justify-center rounded-full bg-gray-100">
-                          <ArrowRight className="size-3 text-gray-400" />
+                  <RevealAnimation key={index} delay={index * 0.2}>
+                    <div
+                      className={`group relative rounded-xl border bg-white p-6 shadow-sm transition-all duration-300 ${step.gradient}`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div
+                          className={`flex size-14 items-center justify-center rounded-xl ${step.color}`}
+                        >
+                          <Icon className="size-7" />
+                        </div>
+                        <div className="flex size-7 items-center justify-center rounded-full bg-gray-100 text-sm font-medium text-gray-600">
+                          {index + 1}
                         </div>
                       </div>
-                    )}
-                  </div>
+
+                      <div className="mt-4">
+                        <h3 className="mb-2 text-xl font-semibold">
+                          {step.title}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {step.description}
+                        </p>
+                      </div>
+
+                      {/* Mobile-only divider */}
+                      {index < howItWorks.length - 1 && (
+                        <div className="my-6 block border-b lg:hidden" />
+                      )}
+
+                      {/* Desktop arrow */}
+                      {index < howItWorks.length - 1 && (
+                        <div className="absolute -right-3 top-1/2 hidden -translate-y-1/2 lg:block">
+                          <div className="flex size-6 items-center justify-center rounded-full bg-gray-100">
+                            <ArrowRight className="size-3 text-gray-400" />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </RevealAnimation>
                 )
               })}
             </div>
@@ -311,68 +316,78 @@ export default async function LandingPage() {
 
         {/* Example Meditations Section */}
         <section className="py-12">
-          <div className="text-center">
-            <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
-              Example Meditations
-            </h2>
-            <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
-              Watch how MeditateGPT creates personalized meditation experiences
-            </p>
-          </div>
+          <RevealAnimation>
+            <div className="text-center">
+              <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
+                Example Meditations
+              </h2>
+              <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
+                Watch how MeditateGPT creates personalized meditation
+                experiences
+              </p>
+            </div>
+          </RevealAnimation>
 
           <div className="grid gap-8 sm:grid-cols-2">
-            <VideoPlayer
-              title="Relationship Meditation"
-              description="Had a minor disagreement with my partner and feeling a bit unsettled"
-              src="/examples/relationship-meditation.mp4"
-              poster="/examples/relationship-meditation-poster.jpg"
-            />
+            <RevealAnimation delay={0.2}>
+              <VideoPlayer
+                title="Relationship Meditation"
+                description="Had a minor disagreement with my partner and feeling a bit unsettled"
+                src="/examples/relationship-meditation.mp4"
+                poster="/examples/relationship-meditation-poster.jpg"
+              />
+            </RevealAnimation>
 
-            <VideoPlayer
-              title="Presentation Meditation"
-              description="I have a team presentation in 30 minutes and feeling slightly nervous"
-              src="/examples/presentation-meditation.mp4"
-              poster="/examples/presentation-meditation-poster.jpg"
-            />
+            <RevealAnimation delay={0.4}>
+              <VideoPlayer
+                title="Presentation Meditation"
+                description="I have a team presentation in 30 minutes and feeling slightly nervous"
+                src="/examples/presentation-meditation.mp4"
+                poster="/examples/presentation-meditation-poster.jpg"
+              />
+            </RevealAnimation>
           </div>
         </section>
 
         {/* Features Section */}
         <section className="py-12">
-          <div className="text-center">
-            <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
-              Powerful Features
-            </h2>
-            <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
-              Everything you need for a personalized meditation experience
-            </p>
-          </div>
+          <RevealAnimation>
+            <div className="text-center">
+              <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
+                Powerful Features
+              </h2>
+              <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
+                Everything you need for a personalized meditation experience
+              </p>
+            </div>
+          </RevealAnimation>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((feature, index) => {
               const Icon = feature.icon
               return (
-                <div
-                  key={index}
-                  className={`group relative rounded-xl border bg-white p-6 shadow-sm transition-all duration-300 ${feature.gradient}`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className={`flex size-14 items-center justify-center rounded-xl ${feature.color}`}
-                    >
-                      <Icon className="size-7" />
+                <RevealAnimation key={index} delay={index * 0.1}>
+                  <div
+                    className={`group relative rounded-xl border bg-white p-6 shadow-sm transition-all duration-300 ${feature.gradient}`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div
+                        className={`flex size-14 items-center justify-center rounded-xl ${feature.color}`}
+                      >
+                        <Icon className="size-7" />
+                      </div>
+                    </div>
+
+                    <div className="mt-4">
+                      <h3 className="mb-2 text-xl font-semibold">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {feature.description}
+                      </p>
                     </div>
                   </div>
-
-                  <div className="mt-4">
-                    <h3 className="mb-2 text-xl font-semibold">
-                      {feature.title}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {feature.description}
-                    </p>
-                  </div>
-                </div>
+                </RevealAnimation>
               )
             })}
           </div>
@@ -392,46 +407,48 @@ export default async function LandingPage() {
 
         {/* Testimonials Section */}
         <section className="py-12">
-          <div className="text-center">
-            <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
-              What Our Users Say
-            </h2>
-            <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
-              Join thousands of people who have transformed their meditation
-              practice with MeditateGPT
-            </p>
-          </div>
+          <RevealAnimation>
+            <div className="text-center">
+              <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
+                What Our Users Say
+              </h2>
+              <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
+                Join thousands of people who have transformed their meditation
+                practice with MeditateGPT
+              </p>
+            </div>
+          </RevealAnimation>
+
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((testimonial, index) => (
-              <div
-                key={index}
-                className="group relative rounded-lg border p-6 transition-all duration-300 hover:border-blue-500/50 hover:shadow-lg"
-              >
-                <div className="mb-4 flex items-center gap-4">
-                  <Image
-                    src={testimonial.image}
-                    alt={testimonial.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full"
-                  />
-                  <div>
-                    <h3 className="font-semibold">{testimonial.name}</h3>
-                    <p className="text-muted-foreground text-sm">
-                      {testimonial.role}
-                    </p>
-                  </div>
-                </div>
-                <div className="mb-4 flex gap-1">
-                  {Array.from({ length: testimonial.rating }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className="size-4 fill-yellow-400 text-yellow-400"
+              <RevealAnimation key={index} delay={index * 0.2}>
+                <div className="group relative rounded-lg border p-6 transition-all duration-300 hover:border-blue-500/50 hover:shadow-lg">
+                  <div className="mb-4 flex items-center gap-4">
+                    <Image
+                      src={testimonial.image}
+                      alt={testimonial.name}
+                      width={48}
+                      height={48}
+                      className="rounded-full"
                     />
-                  ))}
+                    <div>
+                      <h3 className="font-semibold">{testimonial.name}</h3>
+                      <p className="text-muted-foreground text-sm">
+                        {testimonial.role}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mb-4 flex gap-1">
+                    {Array.from({ length: testimonial.rating }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className="size-4 fill-yellow-400 text-yellow-400"
+                      />
+                    ))}
+                  </div>
+                  <p className="text-muted-foreground">{testimonial.content}</p>
                 </div>
-                <p className="text-muted-foreground">{testimonial.content}</p>
-              </div>
+              </RevealAnimation>
             ))}
           </div>
         </section>
