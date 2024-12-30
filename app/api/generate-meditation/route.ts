@@ -255,33 +255,58 @@ export async function POST(req: Request) {
       // Calculate total duration and adjust pause lengths
       const [speechResults] = await Promise.all([Promise.all(speechPromises)])
 
-      // Calculate total speech duration and remaining time for pauses
+      // Calculate total speech duration
       const totalSpeechDuration = speechResults.reduce(
         (sum, result) => sum + result.duration,
         0
       )
       const totalDurationSeconds = validatedDuration * 60
-      const remainingTime = Math.max(
-        0,
-        totalDurationSeconds - totalSpeechDuration
-      )
-      const adjustedPauseDuration = remainingTime / pauseSegments.length
 
-      // Update pause durations
+      // Only adjust pause durations if speech is shorter than target
+      const shouldAdjustPauses = totalSpeechDuration < totalDurationSeconds
+      const remainingTime = shouldAdjustPauses
+        ? totalDurationSeconds - totalSpeechDuration
+        : 0
+      const adjustedPauseDuration =
+        shouldAdjustPauses && pauseSegments.length > 0
+          ? remainingTime / pauseSegments.length
+          : 0
+
+      // Debug logging
+      console.log({
+        validatedDuration,
+        totalDurationSeconds,
+        totalSpeechDuration,
+        remainingTime,
+        adjustedPauseDuration,
+        shouldAdjustPauses,
+        speechSegmentsCount: speechSegments.length,
+        pauseSegmentsCount: pauseSegments.length,
+        speechDurations: speechResults.map(r => r.duration),
+        originalPauseDurations: pauseSegments.map(p => p.segment.duration)
+      })
+
+      // Update pause durations only if speech is shorter than target
       parsedScript.segments = parsedScript.segments.map(segment => {
         if (segment.type === "pause") {
-          return { ...segment, duration: adjustedPauseDuration }
+          return shouldAdjustPauses
+            ? { ...segment, duration: adjustedPauseDuration }
+            : segment // Keep original duration
         }
         return segment
       })
 
+      // Generate pause segments with original or adjusted durations
       const pausePromises = pauseSegments.map(async ({ segment, index }) => {
         const segmentPath = path.join(
           audioDir,
           `${baseFilename}-segment-${index}.mp3`
         )
+        const pauseDuration = shouldAdjustPauses
+          ? adjustedPauseDuration
+          : segment.duration
         await execAsync(
-          `ffmpeg -f lavfi -i anullsrc=r=44100:cl=stereo -t ${adjustedPauseDuration} -b:a 192k -ar 44100 -ac 2 "${segmentPath}"`
+          `ffmpeg -f lavfi -i anullsrc=r=44100:cl=stereo -t ${pauseDuration} -b:a 192k -ar 44100 -ac 2 "${segmentPath}"`
         )
         return { index, path: segmentPath }
       })
