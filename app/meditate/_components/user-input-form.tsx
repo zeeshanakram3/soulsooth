@@ -197,7 +197,7 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
     if (!container || !meditation) return null
 
     return createPortal(
-      <div className="space-y-6">
+      <div className="h-full space-y-6">
         <div className="sticky top-0 z-10 mb-4 flex items-center justify-between rounded-lg border bg-white/80 p-4 backdrop-blur">
           <h3 className="text-xl font-semibold">
             {meditation.meditationScript.title}
@@ -207,7 +207,7 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
           </span>
         </div>
 
-        <div className="h-[calc(100vh-16rem)] overflow-y-auto rounded-lg border bg-white p-6">
+        <div className="h-[calc(100%-5rem)] overflow-y-auto rounded-lg border bg-white p-6">
           {generationStep === "complete" ? (
             <MeditationPlayer meditation={meditation} />
           ) : (

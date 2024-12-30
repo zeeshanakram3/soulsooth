@@ -29,12 +29,9 @@ export default async function MeditatePage() {
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        <div className="grid h-full grid-cols-1 gap-8 lg:grid-cols-[1fr,600px]">
+        <div className="grid h-full grid-cols-1 gap-8 lg:grid-cols-2">
           {/* Left Column */}
-          <div
-            className="mx-auto w-full max-w-2xl lg:max-w-none"
-            id="input-container"
-          >
+          <div className="w-full" id="input-container">
             {/* Header Section with enhanced styling */}
             <div className="mb-8">
               <div className="mb-4 inline-flex items-center gap-3 rounded-2xl bg-white/50 p-2 backdrop-blur-sm">

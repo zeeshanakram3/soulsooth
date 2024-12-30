@@ -34,7 +34,7 @@ export default function VolumeSlider({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">Background Music Volume</label>
+        <span className="text-muted-foreground text-sm">Volume</span>
         <span className="text-muted-foreground text-sm">
           {Math.round(volume * 100)}%
         </span>

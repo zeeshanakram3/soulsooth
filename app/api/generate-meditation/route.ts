@@ -17,7 +17,7 @@ const defaultOpenai = new OpenAI({
 })
 
 // Default background music volume (0-1)
-const DEFAULT_MUSIC_VOLUME = 0.3
+const DEFAULT_MUSIC_VOLUME = 0.15
 
 // Helper to send progress updates
 function sendUpdate(
@@ -114,20 +114,34 @@ export async function POST(req: Request) {
       - Generate a ${validatedDuration}-minute meditation (${targetWordCount} total words)
       - EXACTLY 50% of the time (${silenceSeconds} seconds) must be silence, distributed across pause segments
       - Structure segments in this pattern:
-        1. Welcome and initial guidance (speech)
-        2. Pause for reflection
-        3. Deeper meditation instruction (speech)
-        4. Pause for practice
-        5. Final guidance and positive reinforcement (speech)
+        1. Welcome and initial guidance (30-45 seconds speech)
+        2. Short pause (15-20 seconds)
+        3. Quick check-in and guidance (20-30 seconds speech)
+        4. Brief pause (10-15 seconds)
+        5. Deeper instruction (20-30 seconds speech)
+        6. Medium pause (20-30 seconds)
+        7. Gentle reminder and guidance (20-30 seconds speech)
+        8. Longer centering pause (30-45 seconds)
+        9. Re-engagement and guidance (20-30 seconds speech)
+        10. Brief pause (10-15 seconds)
+        11. Final guidance and positive reinforcement (30-45 seconds speech)
       - Each minute of speech should have roughly 150 words
-      - Speech segments should be calming and focused on breathing and mindfulness
-      - Before each pause, naturally transition with phrases like:
-        * "Now, let's take a moment to practice this..."
-        * "We'll pause now to let these feelings settle..."
-        * "Let's take some time to experience this fully..."
-      - Address their specific situation in the content
+      - Speech segments should be concise, active, and focused on the present moment
+      - Keep the guidance practical and grounded:
+        * Focus on tangible sensations like breathing, posture, and physical comfort
+        * Use clear, simple language without metaphysical or abstract concepts
+        * Avoid phrases like "energy flowing", "light filling", or similar esoteric language
+        * Stick to observable experiences like breath, body sensations, and thoughts
+      - Before pauses, naturally transition with phrases that indicate the pause length:
+        * For short pauses (10-15s): "Let's take a brief moment to settle into this..."
+        * For medium pauses (20-30s): "We'll pause here for a moment to deepen this experience..."
+        * For longer pauses (30-45s): "Now we'll take a longer pause to fully absorb this..."
+      - Keep instructions clear, practical, and actionable
+      - Actively guide the user with frequent check-ins about physical sensations and breath
+      - Address their specific situation with practical solutions
       - IMPORTANT: The meditation MUST end with a speech segment, not a pause
-      - End with a gentle positive reinforcement that makes the user feel accomplished
+      - End with specific, achievable positive reinforcement
+      - IMPORTANT: After the positive reinforcement, conclude with a brief casual goodbye like "Bye. See you soon." or similar short message
       - Return ONLY valid JSON, no other text`
 
       // Generate script

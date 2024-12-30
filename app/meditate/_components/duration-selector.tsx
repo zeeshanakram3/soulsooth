@@ -23,9 +23,6 @@ export default function DurationSelector({
 }: DurationSelectorProps) {
   return (
     <div className="space-y-2">
-      <label className="text-muted-foreground text-sm">
-        Meditation Duration
-      </label>
       <div className="flex flex-wrap gap-2">
         {durations.map(({ value, label }) => (
           <Button

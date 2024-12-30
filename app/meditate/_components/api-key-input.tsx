@@ -43,7 +43,7 @@ export function ApiKeyInput({ onApiKeyChange }: ApiKeyInputProps) {
         <div className="flex flex-1 items-center gap-2">
           <Key className="text-muted-foreground size-4" />
           <Label htmlFor="use-api-key" className="text-sm font-medium">
-            Use Personal OpenAI API Key
+            Use Personal OpenAI API Key (Free - No Credits Used)
           </Label>
         </div>
         <Switch
