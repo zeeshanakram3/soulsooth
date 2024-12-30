@@ -1,0 +1,76 @@
+.videoPlayer {
+  --video-primary: #4F46E5;
+  --video-secondary: #6366F1;
+}
+
+.videoPlayer::-webkit-media-controls-panel {
+  background-image: linear-gradient(transparent, rgba(0, 0, 0, 0.4)) !important;
+  z-index: 10 !important;
+  height: 60px !important;
+  padding-bottom: 10px !important;
+}
+
+.videoPlayer::-webkit-media-controls-enclosure {
+  z-index: 10 !important;
+}
+
+.videoPlayer::-webkit-media-controls {
+  z-index: 10 !important;
+}
+
+.videoPlayer::-webkit-media-controls-play-button,
+.videoPlayer::-webkit-media-controls-timeline,
+.videoPlayer::-webkit-media-controls-current-time-display,
+.videoPlayer::-webkit-media-controls-time-remaining-display,
+.videoPlayer::-webkit-media-controls-mute-button,
+.videoPlayer::-webkit-media-controls-fullscreen-button {
+  color: white !important;
+  transform: scale(1.2) !important;
+}
+
+.videoPlayer::-webkit-media-controls-timeline {
+  border-radius: 9999px !important;
+  height: 4px !important;
+  margin: 0 15px !important;
+}
+
+.videoPlayer::-webkit-media-controls-timeline::-webkit-slider-thumb {
+  background-color: var(--video-primary) !important;
+  border-radius: 50% !important;
+  transition: transform 0.2s !important;
+}
+
+.videoPlayer::-webkit-media-controls-timeline::-webkit-slider-thumb:hover {
+  transform: scale(1.2) !important;
+}
+
+.videoPlayer::-webkit-media-controls-timeline::-webkit-slider-runnable-track {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.videoPlayer::-webkit-media-controls-timeline::-webkit-slider-runnable-track:hover {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.videoPlayer::-webkit-media-controls-volume-slider {
+  border-radius: 9999px !important;
+  height: 4px !important;
+}
+
+.videoPlayer::-webkit-media-controls-volume-slider::-webkit-slider-thumb {
+  background-color: var(--video-primary) !important;
+  border-radius: 50% !important;
+  transition: transform 0.2s !important;
+}
+
+.videoPlayer::-webkit-media-controls-volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2) !important;
+}
+
+.videoPlayer::-webkit-media-controls-volume-slider::-webkit-slider-runnable-track {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+.videoPlayer::-webkit-media-controls-volume-slider::-webkit-slider-runnable-track:hover {
+  background-color: rgba(255, 255, 255, 0.4) !important;
+} 

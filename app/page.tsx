@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { VideoPlayer } from "@/components/ui/video-player"
 
 const testimonials = [
   {
@@ -305,6 +306,34 @@ export default async function LandingPage() {
                 )
               })}
             </div>
+          </div>
+        </section>
+
+        {/* Example Meditations Section */}
+        <section className="py-12">
+          <div className="text-center">
+            <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
+              Example Meditations
+            </h2>
+            <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
+              Watch how MeditateGPT creates personalized meditation experiences
+            </p>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-2">
+            <VideoPlayer
+              title="Relationship Meditation"
+              description="Had a minor disagreement with my partner and feeling a bit unsettled"
+              src="/examples/relationship-meditation.mp4"
+              poster="/examples/relationship-meditation-poster.jpg"
+            />
+
+            <VideoPlayer
+              title="Presentation Meditation"
+              description="I have a team presentation in 30 minutes and feeling slightly nervous"
+              src="/examples/presentation-meditation.mp4"
+              poster="/examples/presentation-meditation-poster.jpg"
+            />
           </div>
         </section>
 
