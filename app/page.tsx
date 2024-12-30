@@ -74,17 +74,33 @@ const howItWorks = [
 
 const features = [
   {
-    title: "Personalized Meditations",
+    title: "Free to Try",
     description:
-      "Share your emotional state and get AI-generated meditation scripts perfectly suited to your needs",
+      "Get 3 free meditation credits when you sign up. No API key needed to start",
+    icon: Infinity,
+    color: "bg-orange-500/10 text-orange-500",
+    gradient: "hover:border-orange-500/50 hover:bg-orange-50/50"
+  },
+  {
+    title: "Open Source",
+    description:
+      "Built in public, free forever. Join our community and help shape the future",
+    icon: Code2,
+    color: "bg-pink-500/10 text-pink-500",
+    gradient: "hover:border-pink-500/50 hover:bg-pink-50/50"
+  },
+  {
+    title: "AI-Powered Meditation",
+    description:
+      "Personalized meditation scripts and soothing AI voice guidance",
     icon: Brain,
     color: "bg-blue-500/10 text-blue-500",
     gradient: "hover:border-blue-500/50 hover:bg-blue-50/50"
   },
   {
-    title: "AI Voice Generation",
+    title: "Voice Generation",
     description:
-      "Experience your meditation scripts with natural-sounding AI voice guidance for a soothing practice",
+      "Natural-sounding AI voices create a calming meditation experience",
     icon: Sparkles,
     color: "bg-violet-500/10 text-violet-500",
     gradient: "hover:border-violet-500/50 hover:bg-violet-50/50"
@@ -92,34 +108,18 @@ const features = [
   {
     title: "Progress Tracking",
     description:
-      "Access your meditation history, replay past sessions, and monitor your mindfulness journey",
+      "Track your meditation journey and replay your favorite sessions",
     icon: History,
     color: "bg-emerald-500/10 text-emerald-500",
     gradient: "hover:border-emerald-500/50 hover:bg-emerald-50/50"
   },
   {
-    title: "Completely Free",
+    title: "Bring Your Own Key",
     description:
-      "All features are available for free. Use your own OpenAI API key for unlimited meditation sessions",
-    icon: Infinity,
-    color: "bg-orange-500/10 text-orange-500",
-    gradient: "hover:border-orange-500/50 hover:bg-orange-50/50"
-  },
-  {
-    title: "Your Own API Key",
-    description:
-      "Use your personal OpenAI API key for complete control over your meditation experience",
+      "Connect your OpenAI API key for unlimited meditation sessions",
     icon: Key,
     color: "bg-yellow-500/10 text-yellow-500",
     gradient: "hover:border-yellow-500/50 hover:bg-yellow-50/50"
-  },
-  {
-    title: "Open Source",
-    description:
-      "Full transparency with our open-source code available on GitHub. Contribute and help improve the platform",
-    icon: Code2,
-    color: "bg-pink-500/10 text-pink-500",
-    gradient: "hover:border-pink-500/50 hover:bg-pink-50/50"
   }
 ]
 
@@ -129,10 +129,36 @@ export default async function LandingPage() {
   return (
     <>
       <div className="container">
+        {/* Open Source Banner */}
+        <div className="border-b bg-gradient-to-r from-blue-50 to-violet-50">
+          <div className="container flex items-center justify-center gap-2 py-2 text-sm">
+            <Github className="size-4" />
+            <span>
+              We're open source! Star us on{" "}
+              <a
+                href="https://github.com/arbab-ml/MeditateGPT"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-blue-600 hover:underline"
+              >
+                GitHub
+              </a>
+            </span>
+          </div>
+        </div>
+
         {/* Hero Section */}
         <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden">
           <div className="relative z-10 py-12">
             <div className="text-center">
+              <div className="mb-6 flex items-center justify-center gap-2">
+                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-600">
+                  100% Free
+                </span>
+                <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-600">
+                  Open Source
+                </span>
+              </div>
               <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl lg:text-6xl">
                 {userId ? "Welcome Back to" : "Welcome to"}{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
@@ -142,7 +168,7 @@ export default async function LandingPage() {
               <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
                 {userId
                   ? "Ready for your next meditation session? Choose an option below to continue your mindfulness journey."
-                  : "Your personal AI meditation guide. Share your emotional state and let MeditateGPT create a custom meditation experience with personalized scripts and soothing audio guidance."}
+                  : "Your personal AI meditation guide - completely free and open source. Share your emotional state and let MeditateGPT create a custom meditation experience with personalized scripts and soothing audio guidance."}
               </p>
               {userId ? (
                 <div className="flex justify-center gap-4">
@@ -169,17 +195,37 @@ export default async function LandingPage() {
                   </Button>
                 </div>
               ) : (
-                <SignUpButton mode="modal">
+                <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+                  <SignUpButton mode="modal">
+                    <Button
+                      size="lg"
+                      className="gap-2 bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-4 text-base"
+                    >
+                      <Sparkles className="size-4" />
+                      Get 3 Free Sessions
+                      <ArrowRight className="size-4" />
+                    </Button>
+                  </SignUpButton>
                   <Button
+                    asChild
+                    variant="outline"
                     size="lg"
-                    className="gap-2 bg-gradient-to-r from-blue-600 to-violet-600 px-5 py-4 text-base"
+                    className="gap-2 px-5 py-4 text-base"
                   >
-                    <Sparkles className="size-4" />
-                    Start Your Journey
-                    <ArrowRight className="size-4" />
+                    <a
+                      href="https://github.com/arbab-ml/MeditateGPT"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Github className="size-4" />
+                      View Source
+                    </a>
                   </Button>
-                </SignUpButton>
+                </div>
               )}
+              <p className="text-muted-foreground mt-4 text-sm">
+                No credit card required. Just bring your OpenAI API key.
+              </p>
             </div>
           </div>
 
@@ -310,7 +356,7 @@ export default async function LandingPage() {
               className="inline-flex items-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
             >
               <Github className="size-4" />
-              View on GitHub
+              View Source
             </a>
           </div>
         </section>
