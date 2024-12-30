@@ -160,18 +160,18 @@ export default async function LandingPage() {
                 </span>
               </div>
               <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl lg:text-6xl">
-                {userId ? "Welcome Back to" : "Welcome to"}{" "}
                 <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
                   MeditateGPT
                 </span>
               </h1>
               <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-                {userId
-                  ? "Ready for your next meditation session? Choose an option below to continue your mindfulness journey."
-                  : "Your personal AI meditation guide - completely free and open source. Share your emotional state and let MeditateGPT create a custom meditation experience with personalized scripts and soothing audio guidance."}
+                Your personal AI meditation guide - completely free and open
+                source. Share your emotional state and let MeditateGPT create a
+                custom meditation experience with personalized scripts and
+                soothing audio guidance.
               </p>
               {userId ? (
-                <div className="flex justify-center gap-4">
+                <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
                   <Button
                     asChild
                     size="lg"

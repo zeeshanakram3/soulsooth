@@ -113,7 +113,26 @@ export async function POST(req: Request) {
       Rules:
       - Generate a ${validatedDuration}-minute meditation (${targetWordCount} total words)
       - EXACTLY 50% of the time (${silenceSeconds} seconds) must be silence, distributed across pause segments
-      - Structure segments in this pattern:
+      - Structure segments based on duration:
+        For 1-2 minutes:
+        1. Welcome and initial guidance (15-20 seconds speech)
+        2. Short pause (10-15 seconds)
+        3. Quick guidance (15-20 seconds speech)
+        4. Brief pause (10-15 seconds)
+        5. Final guidance and positive reinforcement (15-20 seconds speech)
+
+        For 5 minutes:
+        1. Welcome and initial guidance (30-45 seconds speech)
+        2. Short pause (15-20 seconds)
+        3. Quick check-in and guidance (20-30 seconds speech)
+        4. Brief pause (10-15 seconds)
+        5. Deeper instruction (20-30 seconds speech)
+        6. Medium pause (20-30 seconds)
+        7. Gentle reminder and guidance (20-30 seconds speech)
+        8. Longer centering pause (30-45 seconds)
+        9. Final guidance and positive reinforcement (30-45 seconds speech)
+
+        For 10 minutes:
         1. Welcome and initial guidance (30-45 seconds speech)
         2. Short pause (15-20 seconds)
         3. Quick check-in and guidance (20-30 seconds speech)
@@ -126,6 +145,7 @@ export async function POST(req: Request) {
         10. Brief pause (10-15 seconds)
         11. Final guidance and positive reinforcement (30-45 seconds speech)
       - Each minute of speech should have roughly 150 words
+      - For 1-2 minute meditations, use 100 words per minute to keep it concise
       - Speech segments should be concise, active, and focused on the present moment
       - Keep the guidance practical and grounded:
         * Focus on tangible sensations like breathing, posture, and physical comfort
