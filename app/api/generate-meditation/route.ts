@@ -157,32 +157,6 @@ export async function POST(req: Request) {
         throw new Error("Invalid script format")
       }
 
-      // Post-process durations to match target duration
-      const totalDurationSeconds = validatedDuration * 60
-      let totalSpeechDuration = 0
-
-      // Calculate total speech duration
-      parsedScript.segments.forEach(segment => {
-        if (segment.type === "speech") {
-          totalSpeechDuration += segment.duration
-        }
-      })
-
-      // Calculate remaining time for pauses
-      const remainingTime = totalDurationSeconds - totalSpeechDuration
-      const pauseCount = parsedScript.segments.filter(
-        segment => segment.type === "pause"
-      ).length
-      const adjustedPauseDuration = remainingTime / pauseCount
-
-      // Update pause durations
-      parsedScript.segments = parsedScript.segments.map(segment => {
-        if (segment.type === "pause") {
-          return { ...segment, duration: adjustedPauseDuration }
-        }
-        return segment
-      })
-
       // Send script to frontend immediately
       sendUpdate(stream.writable, {
         type: "script",
@@ -249,6 +223,13 @@ export async function POST(req: Request) {
           await execAsync(
             `ffmpeg -i "${tempPath}" -ar 44100 -ac 2 -b:a 192k "${segmentPath}"`
           )
+
+          // Get actual duration of the speech segment
+          const { stdout: durationStr } = await execAsync(
+            `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${segmentPath}"`
+          )
+          const actualDuration = parseFloat(durationStr)
+
           fs.unlinkSync(tempPath)
 
           // Update progress for each speech segment
@@ -260,7 +241,7 @@ export async function POST(req: Request) {
             progress
           })
 
-          return { index, path: segmentPath }
+          return { index, path: segmentPath, duration: actualDuration }
         }
       )
 
@@ -271,20 +252,43 @@ export async function POST(req: Request) {
         progress: 65
       })
 
+      // Calculate total duration and adjust pause lengths
+      const [speechResults] = await Promise.all([Promise.all(speechPromises)])
+
+      // Calculate total speech duration and remaining time for pauses
+      const totalSpeechDuration = speechResults.reduce(
+        (sum, result) => sum + result.duration,
+        0
+      )
+      const totalDurationSeconds = validatedDuration * 60
+      const remainingTime = Math.max(
+        0,
+        totalDurationSeconds - totalSpeechDuration
+      )
+      const adjustedPauseDuration = remainingTime / pauseSegments.length
+
+      // Update pause durations
+      parsedScript.segments = parsedScript.segments.map(segment => {
+        if (segment.type === "pause") {
+          return { ...segment, duration: adjustedPauseDuration }
+        }
+        return segment
+      })
+
       const pausePromises = pauseSegments.map(async ({ segment, index }) => {
         const segmentPath = path.join(
           audioDir,
           `${baseFilename}-segment-${index}.mp3`
         )
         await execAsync(
-          `ffmpeg -f lavfi -i anullsrc=r=44100:cl=stereo -t ${segment.duration} -b:a 192k -ar 44100 -ac 2 "${segmentPath}"`
+          `ffmpeg -f lavfi -i anullsrc=r=44100:cl=stereo -t ${adjustedPauseDuration} -b:a 192k -ar 44100 -ac 2 "${segmentPath}"`
         )
         return { index, path: segmentPath }
       })
 
       // Wait for all segments
-      const [speechResults, pauseResults] = await Promise.all([
-        Promise.all(speechPromises),
+      const [, pauseResults] = await Promise.all([
+        Promise.resolve(speechResults),
         Promise.all(pausePromises)
       ])
 
@@ -333,8 +337,9 @@ export async function POST(req: Request) {
       )
       const duration = parseFloat(durationStr)
 
+      // Loop background music for the full duration
       await execAsync(
-        `ffmpeg -i "${bgMusicPath}" -t ${duration} -ar 44100 -ac 2 "${trimmedMusicPath}"`
+        `ffmpeg -stream_loop -1 -i "${bgMusicPath}" -t ${duration} -ar 44100 -ac 2 "${trimmedMusicPath}"`
       )
 
       // Final mix

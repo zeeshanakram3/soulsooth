@@ -283,7 +283,8 @@ export default function MeditationPlayer({
                       : "text-gray-600"
                   )}
                 >
-                  {segment.duration} second pause - Take a deep breath
+                  {Math.round(segment.duration)} second pause - Focus on your
+                  breath
                 </p>
               </div>
             )}
