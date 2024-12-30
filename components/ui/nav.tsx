@@ -5,16 +5,38 @@ import { SignInButton, SignUpButton, UserButton, useAuth } from "@clerk/nextjs"
 import { Brain, History, Home } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 
 export function Nav() {
   const { isSignedIn } = useAuth()
   const pathname = usePathname()
+  const [scrolled, setScrolled] = useState(false)
+
+  // Handle scroll behavior
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   return (
-    <nav className="border-b">
+    <motion.nav
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      className={`bg-background/80 sticky top-0 z-50 border-b backdrop-blur-md transition-all duration-200 ${
+        scrolled ? "shadow-md" : ""
+      }`}
+    >
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-xl font-bold">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-xl font-bold transition-colors hover:text-blue-600"
+          >
+            <Brain className="size-6 text-blue-600" />
             MeditateGPT
           </Link>
 
@@ -23,6 +45,7 @@ export function Nav() {
               variant={pathname === "/" ? "default" : "ghost"}
               size="sm"
               asChild
+              className="transition-all duration-200 hover:scale-105"
             >
               <Link href="/" className="gap-2">
                 <Home className="size-4" />
@@ -36,6 +59,7 @@ export function Nav() {
                   variant={pathname === "/meditate" ? "default" : "ghost"}
                   size="sm"
                   asChild
+                  className="transition-all duration-200 hover:scale-105"
                 >
                   <Link href="/meditate" className="gap-2">
                     <Brain className="size-4" />
@@ -47,6 +71,7 @@ export function Nav() {
                   variant={pathname === "/dashboard" ? "default" : "ghost"}
                   size="sm"
                   asChild
+                  className="transition-all duration-200 hover:scale-105"
                 >
                   <Link href="/dashboard" className="gap-2">
                     <History className="size-4" />
@@ -58,24 +83,46 @@ export function Nav() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <motion.div
+          className="flex items-center gap-4"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           {isSignedIn ? (
-            <UserButton afterSignOutUrl="/" />
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  avatarBox:
+                    "size-8 hover:scale-105 transition-all duration-200"
+                }
+              }}
+            />
           ) : (
             <>
               <SignInButton mode="modal">
-                <Button variant="ghost" size="sm">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="transition-all duration-200 hover:scale-105"
+                >
                   Sign In
                 </Button>
               </SignInButton>
 
               <SignUpButton mode="modal">
-                <Button size="sm">Get Started</Button>
+                <Button
+                  size="sm"
+                  className="bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-200 hover:scale-105"
+                >
+                  Get Started
+                </Button>
               </SignUpButton>
             </>
           )}
-        </div>
+        </motion.div>
       </div>
-    </nav>
+    </motion.nav>
   )
 }

@@ -5,7 +5,7 @@ import { formatDate } from "@/lib/utils"
 import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ChevronDown, ChevronUp } from "lucide-react"
+import { ChevronDown, ChevronUp, Clock, Music2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import MeditationPlayer from "@/app/meditate/_components/meditation-player"
 
@@ -17,35 +17,41 @@ export default function MeditationCard({ meditation }: MeditationCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="group overflow-hidden transition-all duration-200 hover:border-blue-500/20 hover:bg-blue-50/50">
       <div className="p-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h3 className="font-semibold">
-              {meditation.meditationScript?.title || "Untitled Meditation"}
-            </h3>
-            <p className="text-muted-foreground text-sm">
-              {formatDate(meditation.createdAt)}
+        <div className="flex items-start gap-4">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-violet-500/10">
+            <Music2 className="size-5 text-violet-500" />
+          </div>
+
+          <div className="flex-1 space-y-1">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">
+                {meditation.meditationScript?.title || "Untitled Meditation"}
+              </h3>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="shrink-0 transition-transform duration-200 hover:bg-blue-100/50 group-hover:bg-blue-100/80"
+              >
+                {isExpanded ? (
+                  <ChevronUp className="size-4" />
+                ) : (
+                  <ChevronDown className="size-4" />
+                )}
+              </Button>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <Clock className="size-4" />
+              <span>{formatDate(meditation.createdAt)}</span>
+            </div>
+
+            <p className="text-muted-foreground line-clamp-2 text-sm">
+              {meditation.userInput}
             </p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="shrink-0"
-          >
-            {isExpanded ? (
-              <ChevronUp className="size-4" />
-            ) : (
-              <ChevronDown className="size-4" />
-            )}
-          </Button>
-        </div>
-
-        <div className="mt-4">
-          <p className="text-muted-foreground line-clamp-2 text-sm">
-            {meditation.userInput}
-          </p>
         </div>
 
         <AnimatePresence>

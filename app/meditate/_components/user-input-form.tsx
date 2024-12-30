@@ -273,93 +273,88 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
   return (
     <div className="space-y-4">
       <Card className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <ApiKeyInput onApiKeyChange={handleApiKeyChange} />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
+            <Textarea
+              value={input}
+              onChange={e => setInput(e.target.value)}
+              placeholder="e.g. I'm feeling anxious about an upcoming presentation and need help calming my nerves..."
+              className="min-h-[120px] resize-none rounded-lg border-gray-200 bg-white text-base shadow-sm transition-colors focus:border-blue-500 focus:ring-blue-500"
+              disabled={isLoading}
+            />
 
-          <Textarea
-            value={input}
-            onChange={e => setInput(e.target.value)}
-            placeholder="How are you feeling today? What's on your mind?"
-            className="min-h-[100px]"
-            disabled={isLoading}
-          />
-
-          <DurationSelector
-            duration={duration}
-            onChange={setDuration}
-            disabled={isLoading}
-          />
-
-          <VolumeSlider defaultVolume={musicVolume} onChange={setMusicVolume} />
-
-          <Button
-            type="submit"
-            disabled={isLoading || !input.trim()}
-            className="w-full"
-          >
-            {isLoading ? (
-              <div className="flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin" />
-                {generationStep === "generating-script" &&
-                  "Crafting your meditation..."}
-                {generationStep === "script-ready" && "Processing..."}
-                {generationStep === "generating-speech" &&
-                  "Generating voice..."}
-                {generationStep === "generating-silence" &&
-                  "Adding mindful pauses..."}
-                {generationStep === "combining-audio" &&
-                  "Combining audio segments..."}
-                {generationStep === "adding-music" &&
-                  "Adding soothing background music..."}
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Background Music Volume
+                </label>
+                <VolumeSlider
+                  defaultVolume={musicVolume}
+                  onChange={setMusicVolume}
+                />
               </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Sparkles className="size-4" />
-                Generate Meditation
-              </div>
-            )}
-          </Button>
 
-          {isLoading && (
-            <div className="space-y-2">
-              <Progress value={progress} className="h-2" />
-              <div className="text-muted-foreground flex justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  {generationStep === "generating-script" && (
-                    <>
-                      <Sparkles className="size-4" />
-                      Crafting your personalized meditation script
-                    </>
-                  )}
-                  {generationStep === "generating-speech" && (
-                    <>
-                      <Volume2 className="size-4" />
-                      Converting script to calming voice
-                    </>
-                  )}
-                  {generationStep === "generating-silence" && (
-                    <>
-                      <Volume2 className="size-4" />
-                      Adding mindful pauses
-                    </>
-                  )}
-                  {generationStep === "combining-audio" && (
-                    <>
-                      <Music className="size-4" />
-                      Combining audio segments
-                    </>
-                  )}
-                  {generationStep === "adding-music" && (
-                    <>
-                      <Music className="size-4" />
-                      Adding soothing background music
-                    </>
-                  )}
-                </div>
-                <span>{Math.round(progress)}%</span>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Meditation Duration
+                </label>
+                <DurationSelector
+                  duration={duration}
+                  onChange={setDuration}
+                  disabled={isLoading}
+                />
               </div>
             </div>
-          )}
+
+            <ApiKeyInput onApiKeyChange={handleApiKeyChange} />
+          </div>
+
+          <div className="flex flex-col gap-4">
+            <Button
+              type="submit"
+              size="lg"
+              disabled={isLoading || !input.trim()}
+              className={`relative w-full gap-2 bg-gradient-to-r from-blue-600 to-violet-600 text-base font-medium shadow-sm transition-all hover:translate-y-[-1px] hover:shadow-md disabled:opacity-50 ${
+                isLoading ? "cursor-not-allowed" : ""
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Generating Meditation...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="size-4" />
+                  Generate Meditation
+                </>
+              )}
+            </Button>
+
+            {isLoading && (
+              <div className="space-y-2">
+                <Progress value={progress} className="h-2" />
+                <div className="flex items-center justify-between text-sm text-gray-500">
+                  <span>
+                    {generationStep === "generating-script"
+                      ? "Creating your personalized meditation script..."
+                      : generationStep === "script-ready"
+                        ? "Script generated! Converting to speech..."
+                        : generationStep === "generating-speech"
+                          ? "Converting meditation to natural speech..."
+                          : generationStep === "generating-silence"
+                            ? "Adding pauses for breathing..."
+                            : generationStep === "combining-audio"
+                              ? "Combining audio segments..."
+                              : generationStep === "adding-music"
+                                ? "Adding background music..."
+                                : "Almost done..."}
+                  </span>
+                  <span>{Math.round(progress)}%</span>
+                </div>
+              </div>
+            )}
+          </div>
         </form>
       </Card>
 
