@@ -36,10 +36,7 @@ export default async function DashboardPage({
       <div className="container mx-auto px-4 py-8">
         {/* Header Section */}
         <div className="mb-8">
-          <div className="flex items-start gap-4">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-amber-500/10">
-              <Star className="size-5 text-amber-500" />
-            </div>
+          <div>
             <CreditsDisplay userId={userId} />
           </div>
         </div>

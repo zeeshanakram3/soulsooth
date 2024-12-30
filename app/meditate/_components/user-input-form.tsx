@@ -18,6 +18,7 @@ import { toast } from "sonner"
 import { ApiKeyInput } from "./api-key-input"
 import { setApiKeyAction } from "@/actions/api-key-actions"
 import { createPortal } from "react-dom"
+import { cn } from "@/lib/utils"
 
 type GenerationStep =
   | "idle"
@@ -190,13 +191,13 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
     }
   }
 
-  // Render meditation in the right column
+  // Render meditation in portal
   const renderMeditation = () => {
     const container = document.getElementById("meditation-container")
     if (!container || !meditation) return null
 
     return createPortal(
-      <div className="animate-in fade-in slide-in-from-right-8 duration-500">
+      <div className="space-y-6">
         <div className="sticky top-0 z-10 mb-4 flex items-center justify-between rounded-lg border bg-white/80 p-4 backdrop-blur">
           <h3 className="text-xl font-semibold">
             {meditation.meditationScript.title}
@@ -271,21 +272,26 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
   }, [meditation])
 
   return (
-    <div className="space-y-4">
-      <Card className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
-            <Textarea
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              placeholder="e.g. I'm feeling anxious about an upcoming presentation and need help calming my nerves..."
-              className="min-h-[120px] resize-none rounded-lg border-gray-200 bg-white text-base shadow-sm transition-colors focus:border-blue-500 focus:ring-blue-500"
-              disabled={isLoading}
-            />
+    <div className="space-y-6">
+      <Card className="border-gray-100 bg-white/80 p-8 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">
+                How are you feeling?
+              </label>
+              <Textarea
+                value={input}
+                onChange={e => setInput(e.target.value)}
+                placeholder="e.g. I'm feeling anxious about an upcoming presentation and need help calming my nerves..."
+                className="min-h-[120px] resize-none rounded-xl border-gray-200 bg-white text-base shadow-sm transition-colors focus:border-violet-500 focus:ring-violet-500"
+                disabled={isLoading}
+              />
+            </div>
 
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+            <div className="grid gap-8 sm:grid-cols-2">
+              <div className="space-y-3">
+                <label className="font-medium text-gray-700">
                   Background Music Volume
                 </label>
                 <VolumeSlider
@@ -294,8 +300,8 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
+              <div className="space-y-3">
+                <label className="font-medium text-gray-700">
                   Meditation Duration
                 </label>
                 <DurationSelector
@@ -306,17 +312,19 @@ export default function UserInputForm({ userId }: UserInputFormProps) {
               </div>
             </div>
 
-            <ApiKeyInput onApiKeyChange={handleApiKeyChange} />
+            <div className="space-y-3">
+              <ApiKeyInput onApiKeyChange={handleApiKeyChange} />
+            </div>
           </div>
 
           <div className="flex flex-col gap-4">
             <Button
               type="submit"
-              size="lg"
               disabled={isLoading || !input.trim()}
-              className={`relative w-full gap-2 bg-gradient-to-r from-blue-600 to-violet-600 text-base font-medium shadow-sm transition-all hover:translate-y-[-1px] hover:shadow-md disabled:opacity-50 ${
-                isLoading ? "cursor-not-allowed" : ""
-              }`}
+              className={cn(
+                "gap-2 bg-gradient-to-r from-blue-600 to-violet-600 py-6 text-base font-medium",
+                isLoading && "cursor-not-allowed opacity-50"
+              )}
             >
               {isLoading ? (
                 <>
