@@ -110,7 +110,7 @@ NEXT_PUBLIC_POSTHOG_HOST=
    npm install --legacy-peer-deps
    ```
 
-2. **Common Installation Issues**
+2. **Common Installation Issues**  
    - If you encounter peer dependency conflicts, use `--legacy-peer-deps` flag
    - You may see some deprecation warnings - these are from dependencies and won't affect functionality
    - Make sure your Node.js version meets the requirements before running `npm run dev`
