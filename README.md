@@ -70,14 +70,42 @@ NEXT_PUBLIC_POSTHOG_HOST=
 ### Node.js Version
 - Required Node.js version: `^18.18.0 || ^19.8.0 || >= 20.0.0`
 - Check your Node.js version: `node -v`
-- Update Node.js if needed to meet the version requirements
+- Update Node.js using n version manager:
+  ```bash
+  # Install n version manager
+  sudo npm install -g n
+  
+  # Install latest LTS version of Node.js
+  sudo n lts
+  
+  # Verify new Node.js version
+  node -v
+  ```
 
-### Installation Steps
-1. **Clean Install**
+### Package Installation Methods
+
+#### Method 1: Latest Versions (Recommended)
+1. **Update All Dependencies**
+   ```bash
+   # Install npm-check-updates globally
+   sudo npm install -g npm-check-updates
+   
+   # Check and update all dependencies in package.json
+   ncu -u
+   
+   # Remove existing dependencies
+   rm -rf node_modules package-lock.json
+   
+   # Install updated dependencies
+   npm install
+   ```
+
+#### Method 2: Legacy Installation
+1. **Clean Install with Legacy Peer Dependencies**
    ```bash
    # Remove existing dependencies
    rm -rf node_modules package-lock.json
-
+   
    # Install dependencies with legacy peer deps
    npm install --legacy-peer-deps
    ```
