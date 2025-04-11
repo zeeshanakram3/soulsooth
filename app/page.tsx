@@ -28,7 +28,7 @@ const testimonials = [
     role: "Yoga Instructor",
     image: "/testimonials/sarah.jpg",
     content:
-      "MeditateGPT has transformed how I approach mindfulness. The personalized sessions are incredibly effective.",
+      "SoulSooth has transformed how I approach mindfulness. The personalized sessions are incredibly effective.",
     rating: 5
   },
   {
@@ -132,46 +132,20 @@ export default async function LandingPage() {
   return (
     <>
       <div className="container">
-        {/* Open Source Banner */}
-        <div className="border-b bg-gradient-to-r from-blue-50 to-violet-50">
-          <div className="container flex items-center justify-center gap-2 py-2 text-sm">
-            <Github className="size-4" />
-            <span>
-              We're open source! Star us on{" "}
-              <a
-                href="https://github.com/arbab-ml/MeditateGPT"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-medium text-blue-600 hover:underline"
-              >
-                GitHub
-              </a>
-            </span>
-          </div>
-        </div>
-
         {/* Hero Section */}
         <section className="relative flex min-h-[60vh] items-center justify-center overflow-hidden">
           <div className="relative z-10 py-12">
             <div className="text-center">
-              <div className="mb-6 flex items-center justify-center gap-2">
-                <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-600">
-                  100% Free
-                </span>
-                <span className="rounded-full bg-violet-100 px-3 py-1 text-sm font-medium text-violet-600">
-                  Open Source
-                </span>
-              </div>
               <h1 className="mb-4 text-4xl font-bold sm:text-5xl md:text-6xl lg:text-6xl">
                 <span className="bg-gradient-to-r from-blue-600 to-violet-600 bg-clip-text text-transparent">
-                  MeditateGPT
+                  SoulSooth
                 </span>
               </h1>
               <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-                Your personal AI meditation guide - completely free and open
-                source. Share your emotional state and let MeditateGPT create a
-                custom meditation experience with personalized scripts and
-                soothing audio guidance.
+                Your personal AI meditation guide - completely free. Share your
+                emotional state and let SoulSooth create a custom meditation
+                experience with personalized scripts and soothing audio
+                guidance.
               </p>
               {userId ? (
                 <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
@@ -209,21 +183,6 @@ export default async function LandingPage() {
                       <ArrowRight className="size-4" />
                     </Button>
                   </SignUpButton>
-                  <Button
-                    asChild
-                    variant="outline"
-                    size="lg"
-                    className="gap-2 px-5 py-4 text-base"
-                  >
-                    <a
-                      href="https://github.com/arbab-ml/MeditateGPT"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <Github className="size-4" />
-                      View Source
-                    </a>
-                  </Button>
                 </div>
               )}
               <p className="text-muted-foreground mt-4 text-sm">
@@ -251,7 +210,7 @@ export default async function LandingPage() {
                 How It Works
               </h2>
               <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-                Get started with MeditateGPT in three simple steps
+                Get started with SoulSooth in three simple steps
               </p>
             </div>
           </RevealAnimation>
@@ -322,8 +281,7 @@ export default async function LandingPage() {
                 Example Meditations
               </h2>
               <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
-                Watch how MeditateGPT creates personalized meditation
-                experiences
+                Watch how SoulSooth creates personalized meditation experiences
               </p>
             </div>
           </RevealAnimation>
@@ -391,18 +349,6 @@ export default async function LandingPage() {
               )
             })}
           </div>
-
-          <div className="mt-10 flex justify-center">
-            <a
-              href="https://github.com/arbab-ml/MeditateGPT"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border bg-white px-4 py-2 text-sm font-medium text-gray-600 transition-all hover:border-gray-300 hover:bg-gray-50"
-            >
-              <Github className="size-4" />
-              View Source
-            </a>
-          </div>
         </section>
 
         {/* Testimonials Section */}
@@ -414,7 +360,7 @@ export default async function LandingPage() {
               </h2>
               <p className="text-muted-foreground mx-auto mb-10 max-w-2xl text-lg">
                 Join thousands of people who have transformed their meditation
-                practice with MeditateGPT
+                practice with SoulSooth
               </p>
             </div>
           </RevealAnimation>

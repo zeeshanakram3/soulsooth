@@ -1,12 +1,6 @@
-# MeditateGPT
+# SoulSooth
 
-Experience personalized AI-powered meditation sessions tailored to your emotional state. MeditateGPT uses advanced AI to create custom meditation scripts and soothing audio guidance just for you.
-
-## Sponsors
-
-If you are interested in sponsoring my repos, please contact me at [ads@takeoffai.org](mailto:ads@takeoffai.org).
-
-Or sponsor me directly on [GitHub Sponsors](https://github.com/sponsors/mckaywrigley).
+Experience personalized AI-powered meditation sessions tailored to your emotional state. SoulSooth uses advanced AI to create custom meditation scripts and soothing audio guidance just for you.
 
 ## Tech Stack
 
@@ -15,7 +9,6 @@ Or sponsor me directly on [GitHub Sponsors](https://github.com/sponsors/mckaywri
 - Frontend: [Next.js](https://nextjs.org/docs), [Tailwind](https://tailwindcss.com/docs/guides/nextjs), [Shadcn](https://ui.shadcn.com/docs/installation), [Framer Motion](https://www.framer.com/motion/introduction/)
 - Backend: [PostgreSQL](https://www.postgresql.org/about/), [Supabase](https://supabase.com/), [Drizzle](https://orm.drizzle.team/docs/get-started-postgresql), [Server Actions](https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations)
 - Auth: [Clerk](https://clerk.com/)
-- Payments: [Stripe](https://stripe.com/)
 - Analytics: [PostHog](https://posthog.com/)
 
 ## Prerequisites
@@ -28,8 +21,6 @@ They all have free plans that you can use to get started.
 - Create a [GitHub](https://github.com/) account
 - Create a [Supabase](https://supabase.com/) account
 - Create a [Clerk](https://clerk.com/) account
-- Create a [Stripe](https://stripe.com/) account
-- Create a [PostHog](https://posthog.com/) account
 - Create a [Vercel](https://vercel.com/) account
 
 You will likely not need paid plans unless you are building a business.
@@ -68,16 +59,18 @@ NEXT_PUBLIC_POSTHOG_HOST=
 ## Installation Notes
 
 ### Node.js Version
+
 - Required Node.js version: `^18.18.0 || ^19.8.0 || >= 20.0.0`
 - Check your Node.js version: `node -v`
 - Update Node.js using n version manager:
+
   ```bash
   # Install n version manager
   sudo npm install -g n
-  
+
   # Install latest LTS version of Node.js
   sudo n lts
-  
+
   # Verify new Node.js version
   node -v
   ```
@@ -85,32 +78,37 @@ NEXT_PUBLIC_POSTHOG_HOST=
 ### Package Installation Methods
 
 #### Method 1: Latest Versions (Recommended)
+
 1. **Update All Dependencies**
+
    ```bash
    # Install npm-check-updates globally
    sudo npm install -g npm-check-updates
-   
+
    # Check and update all dependencies in package.json
    ncu -u
-   
+
    # Remove existing dependencies
    rm -rf node_modules package-lock.json
-   
+
    # Install updated dependencies
    npm install
    ```
 
 #### Method 2: Legacy Installation
+
 1. **Clean Install with Legacy Peer Dependencies**
+
    ```bash
    # Remove existing dependencies
    rm -rf node_modules package-lock.json
-   
+
    # Install dependencies with legacy peer deps
    npm install --legacy-peer-deps
    ```
 
-2. **Common Installation Issues**  
+2. **Common Installation Issues**
+
    - If you encounter peer dependency conflicts, use `--legacy-peer-deps` flag
    - You may see some deprecation warnings - these are from dependencies and won't affect functionality
    - Make sure your Node.js version meets the requirements before running `npm run dev`
@@ -125,15 +123,18 @@ NEXT_PUBLIC_POSTHOG_HOST=
 ## Fixes
 
 ### Database Connection
+
 - If getting `getaddrinfo ENOTFOUND` error:
   - URL encode special characters in DB password (e.g., `#` becomes `%23`)
   - Remove any `http://` or `https://` from the database URL
 
 ### Database Schema
+
 - If `relation does not exist` error:
   - Run `npx drizzle-kit push` to push schema to database
 
 ### Node Version
+
 - Required: `^18.18.0 || ^19.8.0 || >= 20.0.0`
 - Update Node using nvm: `nvm install 20` and `nvm use 20`
 
@@ -146,7 +147,7 @@ Key learnings from implementing the meditation app:
 - Keep data fetching in server components for better performance
 - Use client components only when needed (state, interactivity)
 - Properly handle loading states with Suspense boundaries
-- Structure routes with _components folder for route-specific components
+- Structure routes with \_components folder for route-specific components
 
 ### 2. OpenAI Integration
 
@@ -201,6 +202,7 @@ Key learnings from implementing the meditation app:
 ### Important Notes
 
 1. **Environment Setup**
+
    - Required Node.js version: `^18.18.0 || ^19.8.0 || >= 20.0.0`
    - Required environment variables:
      ```
@@ -211,16 +213,19 @@ Key learnings from implementing the meditation app:
      ```
 
 2. **Database Management**
+
    - Run `npx drizzle-kit push` after schema changes
    - Check database connection string format
    - URL encode special characters in DB password
 
 3. **File Storage**
+
    - Audio files are stored in `public/audio`
    - Clean up unused audio files periodically
    - Consider cloud storage for production
 
 4. **Performance**
+
    - Audio generation can take a few seconds
    - Implement proper loading states
    - Consider caching for frequently accessed data
@@ -230,5 +235,3 @@ Key learnings from implementing the meditation app:
    - Limit file sizes and types
    - Implement rate limiting for API routes
    - Regular security audits
-
- 

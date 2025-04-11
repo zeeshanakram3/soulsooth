@@ -37,7 +37,7 @@ export function Nav() {
             className="flex items-center gap-2 text-xl font-bold transition-colors hover:text-blue-600"
           >
             <Brain className="size-6 text-blue-600" />
-            MeditateGPT
+            SoulSooth
           </Link>
 
           <div className="flex items-center gap-4">
@@ -107,7 +107,7 @@ export function Nav() {
                   size="sm"
                   className="transition-all duration-200 hover:scale-105"
                 >
-                  Sign In
+                  Log In
                 </Button>
               </SignInButton>
 
@@ -116,7 +116,7 @@ export function Nav() {
                   size="sm"
                   className="bg-gradient-to-r from-blue-600 to-violet-600 transition-all duration-200 hover:scale-105"
                 >
-                  Get Started
+                  Sign up
                 </Button>
               </SignUpButton>
             </>

@@ -1,13 +1,12 @@
 import { createMeditationAction } from "@/actions/db/meditations-actions"
 import { MeditationScript } from "@/db/schema"
 import { auth } from "@clerk/nextjs/server"
-import OpenAI from "openai"
-import fs from "fs"
-import path from "path"
 import { exec } from "child_process"
-import { promisify } from "util"
+import fs from "fs"
 import { cookies } from "next/headers"
-import { RequestCookies } from "next/dist/server/web/spec-extension/cookies"
+import OpenAI from "openai"
+import path from "path"
+import { promisify } from "util"
 
 const execAsync = promisify(exec)
 
@@ -166,7 +165,7 @@ export async function POST(req: Request) {
 
       // Generate script
       const completion = await openai.chat.completions.create({
-        model: "gpt-4o-mini",
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
